@@ -1,6 +1,12 @@
 {
   "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "Vercel.turbo-vsc",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
     "rust-lang.rust-analyzer",
-    "tamasfe.even-better-toml"
+    "dotenv.dotenv-vscode",
+    "EditorConfig.EditorConfig",
+    "TypeScriptTeam.native-preview"
   ]
 }

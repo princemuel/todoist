@@ -1,0 +1,33 @@
+[workspace]
+# default-members = ["web"]
+members = ["crates/*"]
+resolver = "3"
+
+[workspace.lints.rust]
+elided-lifetimes-in-paths = "warn"
+
+[workspace.lints.clippy]
+many_single_char_names = "allow"
+unwrap_or_default = "allow"
+
+[workspace.package]
+authors = ["Prince Muel <68931805+princemuel@users.noreply.github.com>"]
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+repository = "https://github.com/princemuel/todoist"
+
+[workspace.dependencies]
+
+
+[profile.dev]
+opt-level = 2
+debug = true
+incremental = true
+
+[profile.release]
+opt-level = "s"
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true
