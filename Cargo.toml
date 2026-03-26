@@ -1,7 +1,7 @@
 [workspace]
-# default-members = ["web"]
-members = ["crates/*"]
+members = ["crates/core", "crates/dal", "crates/network/*"]
 resolver = "3"
+# default-members = ["web"]
 
 [workspace.lints.rust]
 elided-lifetimes-in-paths = "warn"
@@ -11,14 +11,22 @@ many_single_char_names = "allow"
 unwrap_or_default = "allow"
 
 [workspace.package]
-authors = ["Prince Muel <68931805+princemuel@users.noreply.github.com>"]
 edition = "2024"
 license = "MIT OR Apache-2.0"
 publish = false
 repository = "https://github.com/princemuel/todoist"
 
 [workspace.dependencies]
+clap = "4"
+# colored    = "3"
+# rand       = "0.9"
+serde = "1"
+serde_json = "1"
+tokio = "1"
 
+################
+dal = { path = "crates/dal" }
+engine = { path = "crates/core" }
 
 [profile.dev]
 opt-level = 2

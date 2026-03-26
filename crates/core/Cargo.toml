@@ -1,14 +1,20 @@
 [package]
 name = "engine"
 version = "0.1.0"
-authors.workspace = true
 edition.workspace = true
 license.workspace = true
 publish.workspace = true
 repository.workspace = true
 
+[features]
+default = ["json_fs"]
+json_fs = ["dal/json"]
+
 [dependencies]
-clap = { version = "4", features = ["derive"] }
+clap = { workspace = true, features = ["derive"] }
+dal = { workspace = true, features = ["json"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 
 [lints]
 workspace = true

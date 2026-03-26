@@ -1,0 +1,10 @@
+[package]
+name = "rocketsh"
+edition.workspace = true
+license.workspace = true
+publish = false
+version = "0.0.0"
+
+[dependencies]
+engine = { workspace = true }
+rocket = "0.5"

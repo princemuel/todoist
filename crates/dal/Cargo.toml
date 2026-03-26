@@ -1,0 +1,17 @@
+#:schema https://www.schemastore.org/cargo.json
+[package]
+edition.workspace = true
+license.workspace = true
+name = "dal"
+publish = false
+version = "0.0.0"
+
+[features]
+json = ["serde_json", "serde"]
+
+[dependencies]
+serde = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
+
+[lints]
+workspace = true

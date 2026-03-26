@@ -1,0 +1,11 @@
+[package]
+name = "actixsh"
+edition.workspace = true
+license.workspace = true
+publish = false
+version = "0.0.0"
+
+[dependencies]
+engine = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+actix-web = "4"
