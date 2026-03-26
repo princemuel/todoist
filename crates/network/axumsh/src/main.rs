@@ -1,34 +1,14 @@
 //! The entry point for the axum server.
-use axum::{
-    routing::{get, Router},
-    extract::Path,
-    http::StatusCode,
-    response::IntoResponse,
-};
 use std::net::SocketAddr;
-use tokio::main;
 
-/// A basic handler that receives a request and returns a greeting.
-/// 
-/// # Arguments
-/// * `name` - The name extracted from the request path
-/// 
-/// # Returns
-/// A string response
-async fn greet(Path(name): Path<String>) -> impl IntoResponse {
-    let name = if name.is_empty() { "World".to_string() } else { name };
-    (StatusCode::OK, format!("Hello {}!", name))
-}
+use axum::extract::Path;
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
+use axum::routing::{Router, get};
 
-/// A basic handler that returns a greeting with no inputs.
-/// 
-/// # Returns
-/// A string response
-async fn say_hello() -> impl IntoResponse {
-    "Hello Again!"
-}
+mod actions;
 
-#[main]
+#[tokio::main]
 async fn main() {
     // Build our application with a route
     let app = Router::new()
@@ -43,3 +23,21 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
+
+/// A basic handler that receives a request and returns a greeting.
+///
+/// # Arguments
+/// * `name` - The name extracted from the request path
+///
+/// # Returns
+/// A string response
+async fn greet(Path(name): Path<String>) -> impl IntoResponse {
+    let name = if name.is_empty() { "World".to_string() } else { name };
+    (StatusCode::OK, format!("Hello {}!", name))
+}
+
+/// A basic handler that returns a greeting with no inputs.
+///
+/// # Returns
+/// A string response
+async fn say_hello() -> impl IntoResponse { "Hello Again!" }

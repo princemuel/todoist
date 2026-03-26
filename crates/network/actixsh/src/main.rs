@@ -1,19 +1,7 @@
 //! The main entry point for the actix server
-use actix_web::{web, App, HttpRequest, HttpServer, Responder};
+use actix_web::{App, HttpRequest, HttpServer, Responder, web};
 
-mod api;
-
-/// A basic handler that recieves a request and returns a greeting.
-///
-/// # Arguments
-/// * `req` - The request object
-///
-/// # Returns
-/// A string response
-async fn greet(req: HttpRequest) -> impl Responder {
-    let name = req.match_info().get("name").unwrap_or("World");
-    format!("Hello {}!", name)
-}
+mod actions;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
@@ -27,4 +15,16 @@ async fn main() -> std::io::Result<()> {
     .bind("127.0.0.1:8080")?
     .run()
     .await
+}
+
+/// A basic handler that recieves a request and returns a greeting.
+///
+/// # Arguments
+/// * `req` - The request object
+///
+/// # Returns
+/// A string response
+async fn greet(req: HttpRequest) -> impl Responder {
+    let name = req.match_info().get("name").unwrap_or("World");
+    format!("Hello {}!", name)
 }

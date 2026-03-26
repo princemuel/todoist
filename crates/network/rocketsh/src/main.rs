@@ -5,6 +5,24 @@ use std::net::Ipv4Addr;
 use rocket::http::Status;
 use rocket::response::status::Custom;
 
+mod actions;
+
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error> {
+    let config = rocket::Config {
+        port: 8080, // Set the desired port number here
+        address: Ipv4Addr::new(127, 0, 0, 1).into(),
+        ..Default::default()
+    };
+
+    let _rocket = rocket::custom(&config)
+        .mount("/", routes![greet_root, greet, say_hello])
+        .launch()
+        .await?;
+
+    Ok(())
+}
+
 /// A basic handler that receives a request and returns a greeting.
 ///
 /// # Arguments
@@ -31,19 +49,3 @@ async fn greet_root() -> Custom<String> { greet(Some("World".to_string())).await
 /// A string response
 #[get("/say/hello")]
 async fn say_hello() -> &'static str { "Hello Again!" }
-
-#[rocket::main]
-async fn main() -> Result<(), rocket::Error> {
-    let config = rocket::Config {
-        port: 8080, // Set the desired port number here
-        address: Ipv4Addr::new(127, 0, 0, 1).into(),
-        ..Default::default()
-    };
-
-    let _rocket = rocket::custom(&config)
-        .mount("/", routes![greet_root, greet, say_hello])
-        .launch()
-        .await?;
-
-    Ok(())
-}
