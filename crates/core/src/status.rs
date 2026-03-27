@@ -5,6 +5,7 @@ use glue::errors::{NanoServiceError, NanoServiceErrorStatus};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Default, PartialEq, Eq, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum TaskStatus {
     Done,
     #[default]

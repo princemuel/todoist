@@ -1,3 +1,3 @@
 pub mod actions;
-mod models;
+pub mod models;
 pub mod status;

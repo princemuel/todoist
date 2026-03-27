@@ -1,10 +1,22 @@
 {
-  "coding": {
-    "title": "coding",
-    "status": "Done"
-  },
   "washing": {
     "title": "washing",
-    "status": "Pending"
+    "status": "pending"
+  },
+  "cooking": {
+    "title": "cooking",
+    "status": "pending"
+  },
+  "coding": {
+    "title": "coding",
+    "status": "done"
+  },
+  "sleep": {
+    "title": "sleep",
+    "status": "pending"
+  },
+  "journey": {
+    "title": "journey",
+    "status": "done"
   }
 }
