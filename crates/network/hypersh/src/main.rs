@@ -39,32 +39,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 async fn handle(req: Request<body::Incoming>) -> Result<Response<Full<Bytes>>, Infallible> {
     let path = req.uri().path();
     let response = match (req.method(), path) {
-        (&Method::GET, "/") => greet(Some("World".to_string())),
-        (&Method::GET, "/say/hello") => say_hello(),
-        (&Method::GET, path) if path.starts_with("/") => {
-            let name = path.trim_start_matches('/').to_string();
-            greet(Some(name))
-        }
-        _ => not_found(),
+        (&Method::GET, "/api/v1/tasks") => actions::get::get_all().await,
+        _ => Ok(not_found()),
     };
-    Ok(response)
-}
-
-/// Returns a greeting with the provided name.
-///
-/// # Arguments
-/// * `name` - The name to greet
-///
-/// # Returns
-/// A `Response` containing the greeting
-fn greet(name: Option<String>) -> Response<Full<Bytes>> {
-    let name = name.unwrap_or_else(|| "World".to_string());
-    Response::new(Full::new(Bytes::from(format!("Hello, {}!", name))))
-}
-
-/// Returns a fixed greeting response.
-fn say_hello() -> Response<Full<Bytes>> {
-    Response::new(Full::new(Bytes::from("Hello Again!")))
+    match response {
+        Ok(value) => Ok(value),
+        Err(err) => Ok(err.into_hyper_response()),
+    }
 }
 
 /// Returns a 404 Not Found response.

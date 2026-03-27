@@ -7,4 +7,6 @@ version = "0.0.0"
 
 [dependencies]
 engine = { workspace = true }
+glue = { workspace = true, features = ["rocket"] }
+
 rocket = { workspace = true }

@@ -5,7 +5,7 @@ use glue::errors::NanoServiceError;
 /// Gets all tasks.
 ///
 /// # Returns
-/// An `HttpResponse` with a JSON body containing all tasks.
+/// A `Result` containing the response to the request or an error
 pub async fn get_all() -> Result<HttpResponse, NanoServiceError> {
     Ok(HttpResponse::Ok().json(get_all_tasks()?))
 }
