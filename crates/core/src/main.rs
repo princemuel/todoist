@@ -1,5 +1,6 @@
 use clap::Parser;
 use engine::actions::create::create;
+use glue::errors::NanoServiceError;
 
 #[derive(Debug, Parser)]
 struct Args {
@@ -9,7 +10,7 @@ struct Args {
     status: String,
 }
 
-fn main() -> Result<(), String> {
+fn main() -> Result<(), NanoServiceError> {
     let args = Args::parse();
     let status = args.status.parse()?;
 

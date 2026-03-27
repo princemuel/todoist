@@ -1,6 +1,7 @@
 use core::fmt;
 use core::str::FromStr;
 
+use glue::errors::{NanoServiceError, NanoServiceErrorStatus};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Default, PartialEq, Eq, Debug, Deserialize, Serialize)]
@@ -25,13 +26,16 @@ impl fmt::Display for TaskStatus {
 }
 
 impl FromStr for TaskStatus {
-    type Err = String;
+    type Err = NanoServiceError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "pending" => Ok(Self::Pending),
             "done" => Ok(Self::Done),
-            _ => Err(format!("Invalid Status: {s}")),
+            _ => Err(NanoServiceError::new(
+                "invalid status".to_string(),
+                NanoServiceErrorStatus::BadRequest,
+            )),
         }
     }
 }

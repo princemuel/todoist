@@ -9,3 +9,5 @@ version = "0.0.0"
 engine = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 actix-web = { workspace = true }
+
+glue = { workspace = true, features = ["actix"] }
