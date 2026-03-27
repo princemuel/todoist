@@ -1,6 +1,6 @@
 use clap::Parser;
 use engine::actions::create::create;
-use glue::errors::NanoServiceError;
+use shared::errors::NanoServiceError;
 
 #[derive(Debug, Parser)]
 struct Args {

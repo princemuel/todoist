@@ -4,10 +4,10 @@ use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 
-use glue::errors::{NanoServiceError, NanoServiceErrorStatus};
-use glue::safe_eject;
-use serde::Serialize;
 use serde::de::DeserializeOwned;
+use serde::Serialize;
+use shared::errors::{NanoServiceError, NanoServiceErrorStatus};
+use shared::safe_eject;
 
 /// Opens a file.
 ///

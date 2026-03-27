@@ -16,7 +16,7 @@ dal = { workspace = true, features = ["json"] }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 
-glue = { workspace = true }
+shared = { workspace = true }
 
 [lints]
 workspace = true

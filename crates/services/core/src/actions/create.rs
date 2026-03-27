@@ -1,6 +1,6 @@
 #[cfg(feature = "json_fs")]
 use dal::json::create_one;
-use glue::errors::NanoServiceError;
+use shared::errors::NanoServiceError;
 
 use crate::models::Task;
 use crate::status::TaskStatus;

@@ -1,6 +1,6 @@
 #[cfg(feature = "json_fs")]
 use dal::json::find_many;
-use glue::errors::NanoServiceError;
+use shared::errors::NanoServiceError;
 
 use crate::models::{Task, Tasks};
 

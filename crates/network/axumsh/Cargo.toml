@@ -10,4 +10,4 @@ engine = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 axum = { workspace = true }
 
-glue = { workspace = true, features = ["axum"] }
+shared = { workspace = true, features = ["axum"] }

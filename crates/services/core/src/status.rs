@@ -1,8 +1,8 @@
 use core::fmt;
 use core::str::FromStr;
 
-use glue::errors::{NanoServiceError, NanoServiceErrorStatus};
 use serde::{Deserialize, Serialize};
+use shared::errors::{NanoServiceError, NanoServiceErrorStatus};
 
 #[derive(Clone, Copy, Default, PartialEq, Eq, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]

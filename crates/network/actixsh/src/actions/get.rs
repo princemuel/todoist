@@ -1,6 +1,6 @@
 use actix_web::HttpResponse;
 use engine::actions::get::get_all as get_all_tasks;
-use glue::errors::NanoServiceError;
+use shared::errors::NanoServiceError;
 
 /// Gets all tasks.
 ///

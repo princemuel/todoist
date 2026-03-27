@@ -13,7 +13,7 @@ json = ["serde_json", "serde"]
 serde = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
 
-glue = { workspace = true }
+shared = { workspace = true }
 
 [lints]
 workspace = true

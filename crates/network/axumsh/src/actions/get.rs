@@ -2,7 +2,7 @@ use axum::Json;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use engine::actions::get::get_all as get_all_tasks;
-use glue::errors::NanoServiceError;
+use shared::errors::NanoServiceError;
 
 /// Gets all tasks.
 ///
