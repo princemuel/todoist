@@ -1,9 +1,3 @@
-#![warn(clippy::pedantic)]
-#![warn(clippy::ptr_arg)]
-#![warn(clippy::use_self)]
-#![warn(clippy::suspicious)]
-#![warn(clippy::perf)]
-
 use clap::Parser;
 use engine::actions::create::create;
 

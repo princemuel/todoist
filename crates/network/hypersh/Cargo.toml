@@ -8,6 +8,6 @@ version = "0.0.0"
 [dependencies]
 engine = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
-hyper = { version = "1", features = ["full"] }
-http-body-util = "0.1"
-hyper-util = { version = "0.1", features = ["full"] }
+hyper = { workspace = true, features = ["full"] }
+http-body-util = { workspace = true }
+hyper-util = { workspace = true, features = ["full"] }

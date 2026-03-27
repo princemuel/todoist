@@ -6,7 +6,21 @@ license.workspace = true
 publish.workspace = true
 repository.workspace = true
 
+[features]
+actix = ["dep:actix-web"]
+rocket = ["dep:rocket"]
+axum = ["dep:axum"]
+hyper = ["dep:hyper", "dep:serde_json", "dep:http-body-util"]
+
 [dependencies]
+actix-web = { workspace = true, optional = true }
+rocket = { workspace = true, features = ["json"], optional = true }
+axum = { workspace = true, optional = true }
+hyper = { workspace = true, features = ["full"], optional = true }
+serde_json = { workspace = true, optional = true }
+http-body-util = { workspace = true, optional = true }
+serde = { workspace = true, features = ["derive"] }
+thiserror = "2"
 
 [lints]
 workspace = true

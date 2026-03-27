@@ -7,4 +7,4 @@ version = "0.0.0"
 
 [dependencies]
 engine = { workspace = true }
-rocket = "0.5"
+rocket = { workspace = true }

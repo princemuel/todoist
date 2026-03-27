@@ -7,8 +7,11 @@ resolver = "3"
 elided-lifetimes-in-paths = "warn"
 
 [workspace.lints.clippy]
-many_single_char_names = "allow"
-unwrap_or_default = "allow"
+pedantic = "warn"
+ptr_arg = "warn"
+use_self = "warn"
+suspicious = "warn"
+perf = "warn"
 
 [workspace.package]
 edition = "2024"
@@ -17,14 +20,22 @@ publish = false
 repository = "https://github.com/princemuel/todoist"
 
 [workspace.dependencies]
+tokio = "1"
+########################
+actix-web = "4"
+axum = { version = "0.8" }
+hyper = "1"
+http-body-util = "0.1"
+hyper-util = "0.1"
+rocket = "0.5"
+#########################
 clap = "4"
 # colored    = "3"
 # rand       = "0.9"
 serde = "1"
 serde_json = "1"
-tokio = "1"
 
-################
+#########################
 dal = { path = "crates/dal" }
 engine = { path = "crates/core" }
 glue = { path = "crates/glue" }
