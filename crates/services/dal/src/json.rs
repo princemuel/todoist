@@ -4,8 +4,8 @@ use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 use shared::errors::{NanoServiceError, NanoServiceErrorStatus};
 use shared::safe_eject;
 
@@ -22,7 +22,7 @@ use shared::safe_eject;
 fn file_handle(path: Option<&str>) -> Result<File, NanoServiceError> {
     let path = match path {
         Some(path) => path,
-        None => &env::var("DATABASE_URL").unwrap_or_else(|_| "db.json".to_string()),
+        None => &env::var("DATABASE_URL").unwrap_or_else(|_| "db.local.json".to_string()),
     };
 
     safe_eject!(
