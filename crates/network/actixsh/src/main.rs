@@ -14,15 +14,3 @@ async fn main() -> io::Result<()> {
         .run()
         .await
 }
-
-/// A basic handler that recieves a request and returns a greeting.
-///
-/// # Arguments
-/// * `req` - The request object
-///
-/// # Returns
-/// A string response
-async fn greet(req: HttpRequest) -> impl Responder {
-    let name = req.match_info().get("name").unwrap_or("World");
-    format!("Hello {}!", name)
-}
