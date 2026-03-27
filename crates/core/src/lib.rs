@@ -5,5 +5,5 @@
 #![warn(clippy::perf)]
 
 pub mod actions;
-pub mod enums;
 mod models;
+pub mod status;

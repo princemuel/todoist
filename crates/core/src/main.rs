@@ -1,15 +1,11 @@
-
 #![warn(clippy::pedantic)]
 #![warn(clippy::ptr_arg)]
 #![warn(clippy::use_self)]
 #![warn(clippy::suspicious)]
 #![warn(clippy::perf)]
 
-use core::str::FromStr;
-
 use clap::Parser;
 use engine::actions::create::create;
-use engine::enums::TaskStatus;
 
 #[derive(Debug, Parser)]
 struct Args {
@@ -21,9 +17,9 @@ struct Args {
 
 fn main() -> Result<(), String> {
     let args = Args::parse();
-    let status = TaskStatus::from_str(&args.status)?;
+    let status = args.status.parse()?;
 
     let item = create(&args.title, status)?;
-    println!("Created item: {item}");
+    println!("{item}");
     Ok(())
 }

@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/core", "crates/dal", "crates/network/*"]
+members = ["crates/core", "crates/dal", "crates/glue", "crates/network/*"]
 resolver = "3"
 # default-members = ["web"]
 
@@ -27,9 +27,7 @@ tokio = "1"
 ################
 dal = { path = "crates/dal" }
 engine = { path = "crates/core" }
-
-[profile.dev]
-incremental = true
+glue = { path = "crates/glue" }
 
 [profile.release]
 opt-level = "s"
