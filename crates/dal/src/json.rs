@@ -1,3 +1,4 @@
+use core::hash::BuildHasher;
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
@@ -13,6 +14,9 @@ use serde::de::DeserializeOwned;
 ///
 /// # Returns
 /// a file handle to perform read/write operations with.
+///
+/// # Errors
+/// Returns an [`io::Error`] if the file cannot be opened or created.
 fn file_handle(path: Option<&str>) -> io::Result<File> {
     let path = match path {
         Some(path) => path,
@@ -31,6 +35,10 @@ fn file_handle(path: Option<&str>) -> io::Result<File> {
 ///
 /// # Returns
 /// a hashmap of items.
+///
+/// # Errors
+/// Returns an [`io::Error`] if the file cannot be read or if the JSON is
+/// malformed.
 pub fn find_many<T>() -> io::Result<HashMap<String, T>>
 where
     T: DeserializeOwned,
@@ -55,6 +63,10 @@ where
 ///
 /// # Returns
 /// an item.
+///
+/// # Errors
+/// Returns an [`io::Error`] with [`ErrorKind::NotFound`] if no item with the
+/// given `id` exists.
 pub fn find_one<T>(id: &str) -> io::Result<T>
 where
     T: DeserializeOwned + Clone,
@@ -71,9 +83,13 @@ where
     }
 }
 
-pub fn create_many<T>(items: &HashMap<String, T>) -> io::Result<()>
+/// # Errors
+/// Returns an [`io::Error`] if the file cannot be written or if serialization
+/// fails.
+pub fn create_many<T, S>(items: &HashMap<String, T, S>) -> io::Result<()>
 where
     T: Serialize,
+    S: BuildHasher,
 {
     let mut file = file_handle(None)?;
     let json = serde_json::to_string_pretty(items)?;
@@ -85,6 +101,10 @@ where
 /// # Arguments
 /// - `id` - a string slice that specifies the id of the item.
 /// - `item` - a reference to the item to save.
+///
+/// # Errors
+/// Returns an [`io::Error`] if reading, serializing, or writing to the file
+/// fails.
 pub fn create_one<T>(id: &str, item: &T) -> io::Result<()>
 where
     T: Serialize + DeserializeOwned + Clone,
@@ -98,6 +118,10 @@ where
 ///
 /// # Arguments
 /// - `id` - a string slice that specifies the id of the item to delete.
+///
+/// # Errors
+/// Returns an [`io::Error`] if reading, serializing, or writing to the file
+/// fails.
 pub fn delete_one<T>(id: &str) -> io::Result<()>
 where
     T: Serialize + DeserializeOwned + Clone,
@@ -128,9 +152,9 @@ mod tests {
         create_one("1", &"Task 1".to_string()).unwrap();
 
         let tasks = find_many::<String>().unwrap();
-        println!("{:?}", tasks);
+        println!("{tasks:?}");
 
         let tasks = find_many::<i32>();
-        println!("{:?}", tasks);
+        println!("{tasks:?}");
     }
 }
