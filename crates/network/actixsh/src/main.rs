@@ -1,20 +1,18 @@
 //! The main entry point for the actix server
+use core::net::Ipv4Addr;
+use std::io;
+
 use actix_web::{App, HttpRequest, HttpServer, Responder, web};
 
 mod actions;
 
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .route("/", web::get().to(greet))
-            .route("/{name}", web::get().to(greet))
-            .route("/say/hello", web::get().to(|| async { "Hello Again!" }))
-    })
-    .workers(4)
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await
+async fn main() -> io::Result<()> {
+    HttpServer::new(|| App::new().configure(actions::views))
+        .workers(4)
+        .bind((Ipv4Addr::UNSPECIFIED, 8080))?
+        .run()
+        .await
 }
 
 /// A basic handler that recieves a request and returns a greeting.
