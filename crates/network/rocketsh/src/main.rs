@@ -1,6 +1,6 @@
 #[macro_use] extern crate rocket;
 
-use std::net::Ipv4Addr;
+use core::net::Ipv4Addr;
 
 use rocket::http::Status;
 use rocket::response::status::Custom;
@@ -8,10 +8,11 @@ use rocket::response::status::Custom;
 mod actions;
 
 #[rocket::main]
+#[allow(clippy::result_large_err)]
 async fn main() -> Result<(), rocket::Error> {
     let config = rocket::Config {
         port: 8080, // Set the desired port number here
-        address: Ipv4Addr::new(127, 0, 0, 1).into(),
+        address: Ipv4Addr::UNSPECIFIED.into(),
         ..Default::default()
     };
 

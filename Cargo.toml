@@ -29,8 +29,6 @@ dal = { path = "crates/dal" }
 engine = { path = "crates/core" }
 
 [profile.dev]
-opt-level = 2
-debug = true
 incremental = true
 
 [profile.release]

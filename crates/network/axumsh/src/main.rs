@@ -1,5 +1,5 @@
 //! The entry point for the axum server.
-use std::net::SocketAddr;
+use core::net::{Ipv4Addr, SocketAddr};
 
 use axum::extract::Path;
 use axum::http::StatusCode;
@@ -13,11 +13,11 @@ async fn main() {
     // Build our application with a route
     let app = Router::new()
         .route("/", get(|| greet(Path("World".to_string()))))
-        .route("/:name", get(greet))
+        .route("/{name}", get(greet))
         .route("/say/hello", get(say_hello));
 
     // Specify the address and port to bind the server
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
+    let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, 8080));
     println!("Listening on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();

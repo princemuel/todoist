@@ -1,24 +1,24 @@
-use std::convert::Infallible;
-use std::net::SocketAddr;
+use core::convert::Infallible;
+use core::net::{Ipv4Addr, SocketAddr};
 
 use http_body_util::Full;
 use hyper::body::Bytes;
 use hyper::server::conn::http1;
 use hyper::service::service_fn;
-use hyper::{Method, Request, Response};
+use hyper::{Method, Request, Response, body};
 use hyper_util::rt::TokioIo;
-use tokio::net::TcpListener;
+use tokio::{net, task};
 
 mod actions;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
-    let listener = TcpListener::bind(addr).await?;
+    let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, 8080));
+    let listener = net::TcpListener::bind(addr).await?;
     loop {
         let (stream, _) = listener.accept().await?;
         let io = TokioIo::new(stream);
-        tokio::task::spawn(async move {
+        task::spawn(async move {
             if let Err(err) = http1::Builder::new()
                 .serve_connection(io, service_fn(handle))
                 .await
@@ -36,9 +36,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 ///
 /// # Returns
 /// A `Result` containing the response to the request or an error
-async fn handle(
-    req: Request<hyper::body::Incoming>,
-) -> Result<Response<Full<Bytes>>, Infallible> {
+async fn handle(req: Request<body::Incoming>) -> Result<Response<Full<Bytes>>, Infallible> {
     let path = req.uri().path();
     let response = match (req.method(), path) {
         (&Method::GET, "/") => greet(Some("World".to_string())),
