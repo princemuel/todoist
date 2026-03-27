@@ -1,9 +1,11 @@
 use core::hash::BuildHasher;
 use std::collections::HashMap;
+use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
-use std::{env, io};
 
+use glue::errors::{NanoServiceError, NanoServiceErrorStatus};
+use glue::safe_eject;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 
@@ -16,19 +18,23 @@ use serde::de::DeserializeOwned;
 /// a file handle to perform read/write operations with.
 ///
 /// # Errors
-/// Returns an [`io::Error`] if the file cannot be opened or created.
-fn file_handle(path: Option<&str>) -> io::Result<File> {
+/// Returns a [`NanoServiceError`] if the file cannot be opened or created.
+fn file_handle(path: Option<&str>) -> Result<File, NanoServiceError> {
     let path = match path {
         Some(path) => path,
         None => &env::var("DATABASE_URL").unwrap_or_else(|_| "db.json".to_string()),
     };
 
-    OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
-        .open(path)
+    safe_eject!(
+        OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .truncate(false)
+            .open(path),
+        NanoServiceErrorStatus::Unknown,
+        "Error writing resource to database"
+    )
 }
 
 /// Gets all the items from the JSON file.
@@ -37,22 +43,31 @@ fn file_handle(path: Option<&str>) -> io::Result<File> {
 /// a hashmap of items.
 ///
 /// # Errors
-/// Returns an [`io::Error`] if the file cannot be read or if the JSON is
+/// Returns an [`NanoServiceError`] if the file cannot be read or if the JSON is
 /// malformed.
-pub fn find_many<T>() -> io::Result<HashMap<String, T>>
+pub fn find_many<T>() -> Result<HashMap<String, T>, NanoServiceError>
 where
     T: DeserializeOwned,
 {
     let mut f = file_handle(None)?;
     let mut buffer = String::new();
-    f.read_to_string(&mut buffer)?;
+
+    safe_eject!(
+        f.read_to_string(&mut buffer),
+        NanoServiceErrorStatus::Unknown,
+        "Error reading database"
+    )?;
 
     let buffer = buffer.trim();
     if buffer.is_empty() {
         return Ok(HashMap::with_capacity(0));
     }
 
-    let items = serde_json::from_str(buffer)?;
+    let items = safe_eject!(
+        serde_json::from_str(buffer),
+        NanoServiceErrorStatus::Unknown
+    )?;
+
     Ok(items)
 }
 
@@ -65,35 +80,43 @@ where
 /// an item.
 ///
 /// # Errors
-/// Returns an [`io::Error`] with [`ErrorKind::NotFound`] if no item with the
-/// given `id` exists.
-pub fn find_one<T>(id: &str) -> io::Result<T>
+/// Returns an [`NanoServiceError`] with [`NanoServiceErrorStatus::NotFound`] if
+/// no item with the given `id` exists.
+pub fn find_one<T>(id: &str) -> Result<T, NanoServiceError>
 where
     T: DeserializeOwned + Clone,
 {
-    use io::{Error, ErrorKind};
-
     let items = find_many::<T>()?;
     match items.get(id) {
-        None => Err(Error::new(
-            ErrorKind::NotFound,
+        None => Err(NanoServiceError::new(
             format!("Resource with id '{id}' not found"),
+            NanoServiceErrorStatus::NotFound,
         )),
         Some(item) => Ok(item.clone()),
     }
 }
 
 /// # Errors
-/// Returns an [`io::Error`] if the file cannot be written or if serialization
-/// fails.
-pub fn create_many<T, S>(items: &HashMap<String, T, S>) -> io::Result<()>
+/// Returns an [`NanoServiceError`] if the file cannot be written or if
+/// serialization fails.
+pub fn create_many<T, S>(items: &HashMap<String, T, S>) -> Result<(), NanoServiceError>
 where
     T: Serialize,
     S: BuildHasher,
 {
     let mut file = file_handle(None)?;
-    let json = serde_json::to_string_pretty(items)?;
-    file.write_all(json.as_bytes())
+
+    let body = safe_eject!(
+        serde_json::to_string_pretty(items),
+        NanoServiceErrorStatus::Unknown,
+        "Error serializing JSON before saving tasks"
+    )?;
+
+    safe_eject!(
+        file.write_all(body.as_bytes()),
+        NanoServiceErrorStatus::Unknown,
+        "Error writing tasks to JSON to file"
+    )
 }
 
 /// Saves an item to the JSON file.
@@ -103,9 +126,9 @@ where
 /// - `item` - a reference to the item to save.
 ///
 /// # Errors
-/// Returns an [`io::Error`] if reading, serializing, or writing to the file
-/// fails.
-pub fn create_one<T>(id: &str, item: &T) -> io::Result<()>
+/// Returns an [`NanoServiceError`] if reading, serializing, or writing to the
+/// file fails.
+pub fn create_one<T>(id: &str, item: &T) -> Result<(), NanoServiceError>
 where
     T: Serialize + DeserializeOwned + Clone,
 {
@@ -120,9 +143,9 @@ where
 /// - `id` - a string slice that specifies the id of the item to delete.
 ///
 /// # Errors
-/// Returns an [`io::Error`] if reading, serializing, or writing to the file
-/// fails.
-pub fn delete_one<T>(id: &str) -> io::Result<()>
+/// Returns an [`NanoServiceError`] if reading, serializing, or writing to the
+/// file fails.
+pub fn delete_one<T>(id: &str) -> Result<(), NanoServiceError>
 where
     T: Serialize + DeserializeOwned + Clone,
 {
