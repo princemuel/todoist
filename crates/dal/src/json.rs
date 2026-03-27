@@ -85,7 +85,7 @@ where
 /// # Arguments
 /// - `id` - a string slice that specifies the id of the item.
 /// - `item` - a reference to the item to save.
-pub fn create<T>(id: &str, item: &T) -> io::Result<()>
+pub fn create_one<T>(id: &str, item: &T) -> io::Result<()>
 where
     T: Serialize + DeserializeOwned + Clone,
 {
@@ -125,7 +125,7 @@ mod tests {
     #[test]
     #[cfg(feature = "json")]
     fn test_find_many() {
-        create("1", &"Task 1".to_string()).unwrap();
+        create_one("1", &"Task 1".to_string()).unwrap();
 
         let tasks = find_many::<String>().unwrap();
         println!("{:?}", tasks);
