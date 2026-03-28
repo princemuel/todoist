@@ -5,29 +5,27 @@ use serde::{Deserialize, Serialize};
 
 /// The error struct that is passed between layers and servers.
 #[derive(Debug, Deserialize, Serialize, thiserror::Error)]
-pub struct NanoServiceError {
+pub struct SharedError {
     /// The error message.
     pub message: String,
     /// The status of the error.
-    pub status:  NanoServiceErrorStatus,
+    pub status:  SharedErrorStatus,
 }
 
-impl NanoServiceError {
-    /// Creates a new [`NanoServiceError`].
+impl SharedError {
+    /// Creates a new [`SharedError`].
     #[must_use]
-    pub fn new(message: String, status: NanoServiceErrorStatus) -> Self {
-        Self { message, status }
-    }
+    pub fn new(message: String, status: SharedErrorStatus) -> Self { Self { message, status } }
 }
 
-impl fmt::Display for NanoServiceError {
+impl fmt::Display for SharedError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result { write!(f, "{}", self.message) }
 }
 
 /// The status of the error.
 /// This is used to determine the HTTP status code to return.
 #[derive(PartialEq, Eq, Debug, Deserialize, Serialize, thiserror::Error)]
-pub enum NanoServiceErrorStatus {
+pub enum SharedErrorStatus {
     #[error("Bad Request")]
     BadRequest,
     #[error("Unauthorized")]
@@ -45,10 +43,10 @@ pub enum NanoServiceErrorStatus {
 #[macro_export]
 macro_rules! safe_eject {
     ($err:expr, $status:expr) => {
-        $err.map_err(|x| NanoServiceError::new(x.to_string(), $status))
+        $err.map_err(|x| SharedError::new(x.to_string(), $status))
     };
     ($err:expr, $status:expr, $ctx:expr) => {
-        $err.map_err(|x| NanoServiceError::new(format!("{}: {}", $ctx, x.to_string()), $status))
+        $err.map_err(|x| SharedError::new(format!("{}: {}", $ctx, x.to_string()), $status))
     };
 }
 
@@ -58,17 +56,17 @@ mod actix_impl {
     use actix_web::error::ResponseError;
     use actix_web::http::StatusCode;
 
-    use super::{NanoServiceError, NanoServiceErrorStatus};
+    use super::{SharedError, SharedErrorStatus};
 
-    impl ResponseError for NanoServiceError {
+    impl ResponseError for SharedError {
         fn status_code(&self) -> StatusCode {
             match self.status {
-                NanoServiceErrorStatus::BadRequest => StatusCode::BAD_REQUEST,
-                NanoServiceErrorStatus::Unauthorized => StatusCode::UNAUTHORIZED,
-                NanoServiceErrorStatus::Forbidden => StatusCode::FORBIDDEN,
-                NanoServiceErrorStatus::NotFound => StatusCode::NOT_FOUND,
-                NanoServiceErrorStatus::Conflict => StatusCode::CONFLICT,
-                NanoServiceErrorStatus::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
+                SharedErrorStatus::BadRequest => StatusCode::BAD_REQUEST,
+                SharedErrorStatus::Unauthorized => StatusCode::UNAUTHORIZED,
+                SharedErrorStatus::Forbidden => StatusCode::FORBIDDEN,
+                SharedErrorStatus::NotFound => StatusCode::NOT_FOUND,
+                SharedErrorStatus::Conflict => StatusCode::CONFLICT,
+                SharedErrorStatus::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
             }
         }
 
@@ -85,18 +83,18 @@ mod axum_impl {
     use axum::http::StatusCode;
     use axum::response::{IntoResponse, Response};
 
-    use super::{NanoServiceError, NanoServiceErrorStatus};
+    use super::{SharedError, SharedErrorStatus};
 
     /// Implementing the [`IntoResponse`] trait for Axum.
-    impl IntoResponse for NanoServiceError {
+    impl IntoResponse for SharedError {
         fn into_response(self) -> Response {
             let status = match self.status {
-                NanoServiceErrorStatus::BadRequest => StatusCode::BAD_REQUEST,
-                NanoServiceErrorStatus::Unauthorized => StatusCode::UNAUTHORIZED,
-                NanoServiceErrorStatus::Forbidden => StatusCode::FORBIDDEN,
-                NanoServiceErrorStatus::NotFound => StatusCode::NOT_FOUND,
-                NanoServiceErrorStatus::Conflict => StatusCode::CONFLICT,
-                NanoServiceErrorStatus::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
+                SharedErrorStatus::BadRequest => StatusCode::BAD_REQUEST,
+                SharedErrorStatus::Unauthorized => StatusCode::UNAUTHORIZED,
+                SharedErrorStatus::Forbidden => StatusCode::FORBIDDEN,
+                SharedErrorStatus::NotFound => StatusCode::NOT_FOUND,
+                SharedErrorStatus::Conflict => StatusCode::CONFLICT,
+                SharedErrorStatus::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
             };
 
             (status, Json(self.message)).into_response()
@@ -110,9 +108,9 @@ mod hyper_impl {
     use hyper::body::Bytes;
     use hyper::{Response, StatusCode, header};
 
-    use super::{NanoServiceError, NanoServiceErrorStatus};
+    use super::{SharedError, SharedErrorStatus};
 
-    impl NanoServiceError {
+    impl SharedError {
         /// Converts the error into a Hyper HTTP response.
         ///
         /// # Panics
@@ -120,15 +118,17 @@ mod hyper_impl {
         /// or if the error message cannot be serialized to JSON.
         pub fn into_hyper_response(self) -> Response<Full<Bytes>> {
             let status = match self.status {
-                NanoServiceErrorStatus::BadRequest => StatusCode::BAD_REQUEST,
-                NanoServiceErrorStatus::Unauthorized => StatusCode::UNAUTHORIZED,
-                NanoServiceErrorStatus::Forbidden => StatusCode::FORBIDDEN,
-                NanoServiceErrorStatus::NotFound => StatusCode::NOT_FOUND,
-                NanoServiceErrorStatus::Conflict => StatusCode::CONFLICT,
-                NanoServiceErrorStatus::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
+                SharedErrorStatus::BadRequest => StatusCode::BAD_REQUEST,
+                SharedErrorStatus::Unauthorized => StatusCode::UNAUTHORIZED,
+                SharedErrorStatus::Forbidden => StatusCode::FORBIDDEN,
+                SharedErrorStatus::NotFound => StatusCode::NOT_FOUND,
+                SharedErrorStatus::Conflict => StatusCode::CONFLICT,
+                SharedErrorStatus::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
             };
 
-            let body = serde_json::to_string(&self.message).unwrap();
+            #[allow(clippy::expect_used)]
+            let body = serde_json::to_string(&self.message).expect("invalid error message");
+            #[allow(clippy::unwrap_used)]
             Response::builder()
                 .header(header::CONTENT_TYPE, "application/json")
                 .status(status)
@@ -146,18 +146,18 @@ mod rocket_impl {
     use rocket::request::Request;
     use rocket::response::{self, Responder, Response};
 
-    use super::{NanoServiceError, NanoServiceErrorStatus};
+    use super::{SharedError, SharedErrorStatus};
 
     #[rocket::async_trait]
-    impl<'r> Responder<'r, 'static> for NanoServiceError {
+    impl<'r> Responder<'r, 'static> for SharedError {
         fn respond_to(self, _req: &'r Request<'_>) -> response::Result<'static> {
             let status = match self.status {
-                NanoServiceErrorStatus::BadRequest => Status::BadRequest,
-                NanoServiceErrorStatus::Unauthorized => Status::Unauthorized,
-                NanoServiceErrorStatus::Forbidden => Status::Forbidden,
-                NanoServiceErrorStatus::NotFound => Status::NotFound,
-                NanoServiceErrorStatus::Conflict => Status::Conflict,
-                NanoServiceErrorStatus::Unknown => Status::InternalServerError,
+                SharedErrorStatus::BadRequest => Status::BadRequest,
+                SharedErrorStatus::Unauthorized => Status::Unauthorized,
+                SharedErrorStatus::Forbidden => Status::Forbidden,
+                SharedErrorStatus::NotFound => Status::NotFound,
+                SharedErrorStatus::Conflict => Status::Conflict,
+                SharedErrorStatus::Unknown => Status::InternalServerError,
             };
 
             Response::build()
