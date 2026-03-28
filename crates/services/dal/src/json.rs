@@ -30,7 +30,7 @@ fn file_handle(path: Option<&str>) -> Result<File, NanoServiceError> {
             .read(true)
             .write(true)
             .create(true)
-            .truncate(false)
+            .truncate(true)
             .open(path),
         NanoServiceErrorStatus::Unknown,
         "Error writing resource to database"
