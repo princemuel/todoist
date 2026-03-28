@@ -6,7 +6,7 @@ use std::io::{Read, Write};
 
 use serde::Serialize;
 use serde::de::DeserializeOwned;
-use shared::errors::{NanoServiceError, NanoServiceErrorStatus};
+use shared::errors::{SharedError, SharedErrorStatus};
 use shared::safe_eject;
 
 /// Opens a file.
@@ -18,8 +18,8 @@ use shared::safe_eject;
 /// a file handle to perform read/write operations with.
 ///
 /// # Errors
-/// Returns a [`NanoServiceError`] if the file cannot be opened or created.
-fn file_handle(path: Option<&str>) -> Result<File, NanoServiceError> {
+/// Returns a [`SharedError`] if the file cannot be opened or created.
+fn file_handle(path: Option<&str>) -> Result<File, SharedError> {
     let path = match path {
         Some(path) => path,
         None => &env::var("DATABASE_URL").unwrap_or_else(|_| "db.local.json".to_string()),
@@ -32,7 +32,7 @@ fn file_handle(path: Option<&str>) -> Result<File, NanoServiceError> {
             .create(true)
             .truncate(true)
             .open(path),
-        NanoServiceErrorStatus::Unknown,
+        SharedErrorStatus::Unknown,
         "Error writing resource to database"
     )
 }
@@ -43,9 +43,9 @@ fn file_handle(path: Option<&str>) -> Result<File, NanoServiceError> {
 /// a hashmap of items.
 ///
 /// # Errors
-/// Returns an [`NanoServiceError`] if the file cannot be read or if the JSON is
+/// Returns an [`SharedError`] if the file cannot be read or if the JSON is
 /// malformed.
-pub fn find_many<T>() -> Result<HashMap<String, T>, NanoServiceError>
+pub fn find_many<T>() -> Result<HashMap<String, T>, SharedError>
 where
     T: DeserializeOwned,
 {
@@ -54,7 +54,7 @@ where
 
     safe_eject!(
         f.read_to_string(&mut buffer),
-        NanoServiceErrorStatus::Unknown,
+        SharedErrorStatus::Unknown,
         "Error reading database"
     )?;
 
@@ -63,10 +63,7 @@ where
         return Ok(HashMap::with_capacity(0));
     }
 
-    let items = safe_eject!(
-        serde_json::from_str(buffer),
-        NanoServiceErrorStatus::Unknown
-    )?;
+    let items = safe_eject!(serde_json::from_str(buffer), SharedErrorStatus::Unknown)?;
 
     Ok(items)
 }
@@ -80,26 +77,26 @@ where
 /// an item.
 ///
 /// # Errors
-/// Returns an [`NanoServiceError`] with [`NanoServiceErrorStatus::NotFound`] if
+/// Returns an [`SharedError`] with [`SharedErrorStatus::NotFound`] if
 /// no item with the given `id` exists.
-pub fn find_one<T>(id: &str) -> Result<T, NanoServiceError>
+pub fn find_one<T>(id: &str) -> Result<T, SharedError>
 where
     T: DeserializeOwned + Clone,
 {
     let items = find_many::<T>()?;
     match items.get(id) {
-        None => Err(NanoServiceError::new(
+        None => Err(SharedError::new(
             format!("Resource with id '{id}' not found"),
-            NanoServiceErrorStatus::NotFound,
+            SharedErrorStatus::NotFound,
         )),
         Some(item) => Ok(item.clone()),
     }
 }
 
 /// # Errors
-/// Returns an [`NanoServiceError`] if the file cannot be written or if
+/// Returns an [`SharedError`] if the file cannot be written or if
 /// serialization fails.
-pub fn create_many<T, S>(items: &HashMap<String, T, S>) -> Result<(), NanoServiceError>
+pub fn create_many<T, S>(items: &HashMap<String, T, S>) -> Result<(), SharedError>
 where
     T: Serialize,
     S: BuildHasher,
@@ -108,13 +105,13 @@ where
 
     let body = safe_eject!(
         serde_json::to_string_pretty(items),
-        NanoServiceErrorStatus::Unknown,
+        SharedErrorStatus::Unknown,
         "Error serializing JSON before saving tasks"
     )?;
 
     safe_eject!(
         file.write_all(body.as_bytes()),
-        NanoServiceErrorStatus::Unknown,
+        SharedErrorStatus::Unknown,
         "Error writing tasks to JSON to file"
     )
 }
@@ -126,9 +123,9 @@ where
 /// - `item` - a reference to the item to save.
 ///
 /// # Errors
-/// Returns an [`NanoServiceError`] if reading, serializing, or writing to the
+/// Returns an [`SharedError`] if reading, serializing, or writing to the
 /// file fails.
-pub fn create_one<T>(id: &str, item: &T) -> Result<(), NanoServiceError>
+pub fn create_one<T>(id: &str, item: &T) -> Result<(), SharedError>
 where
     T: Serialize + DeserializeOwned + Clone,
 {
@@ -143,18 +140,27 @@ where
 /// - `id` - a string slice that specifies the id of the item to delete.
 ///
 /// # Errors
-/// Returns an [`NanoServiceError`] if reading, serializing, or writing to the
+/// Returns an [`SharedError`] if reading, serializing, or writing to the
 /// file fails.
-pub fn delete_one<T>(id: &str) -> Result<(), NanoServiceError>
+pub fn delete_one<T>(id: &str) -> Result<T, SharedError>
 where
     T: Serialize + DeserializeOwned + Clone,
 {
     let mut items = find_many::<T>().unwrap_or_else(|_| HashMap::with_capacity(0));
-    items.remove(id);
-    create_many(&items)
+    match items.remove(id) {
+        Some(item) => {
+            create_many(&items)?;
+            Ok(item)
+        }
+        None => Err(SharedError::new(
+            format!("Resource with id {id} not found",),
+            SharedErrorStatus::NotFound,
+        )),
+    }
 }
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 mod tests {
 
     use super::*;

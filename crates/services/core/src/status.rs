@@ -2,7 +2,7 @@ use core::fmt;
 use core::str::FromStr;
 
 use serde::{Deserialize, Serialize};
-use shared::errors::{NanoServiceError, NanoServiceErrorStatus};
+use shared::errors::{SharedError, SharedErrorStatus};
 
 #[derive(Clone, Copy, Default, PartialEq, Eq, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -27,20 +27,21 @@ impl fmt::Display for TaskStatus {
 }
 
 impl FromStr for TaskStatus {
-    type Err = NanoServiceError;
+    type Err = SharedError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "pending" => Ok(Self::Pending),
             "done" => Ok(Self::Done),
-            _ => Err(NanoServiceError::new(
+            _ => Err(SharedError::new(
                 "invalid status".to_string(),
-                NanoServiceErrorStatus::BadRequest,
+                SharedErrorStatus::BadRequest,
             )),
         }
     }
 }
 
+#[allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 #[cfg(test)]
 mod tests {
     use super::*;

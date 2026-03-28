@@ -1,20 +1,10 @@
 #[cfg(feature = "json_fs")]
 use dal::json::create_one;
-use shared::errors::NanoServiceError;
+use shared::errors::SharedError;
 
 use crate::models::Task;
-use crate::status::TaskStatus;
 
-/// .
-///
-/// # Errors
-///
-/// This function will return an error if saving to the db fails.
-pub fn create(title: &str, status: TaskStatus) -> Result<Task, NanoServiceError> {
-    let item = Task {
-        title: title.to_string(),
-        status,
-    };
-    create_one(title, &item)?;
+pub fn create(item: Task) -> Result<Task, SharedError> {
+    create_one(&item.title.clone(), &item)?;
     Ok(item)
 }
