@@ -10,7 +10,8 @@ async fn main() {
     // Build our application with a route
     let app = actions::views(Router::new());
 
-    // Specify the address and port to bind the server
+    // Specify the address and port to bind the
+    // server
     let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, 8080));
     println!("Listening on {}", addr);
 
