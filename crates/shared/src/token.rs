@@ -1,4 +1,5 @@
-/// The houses data from the token in the header.
+/// The houses data from the token in the
+/// header.
 pub struct HeaderToken {
     /// The token from the header
     pub message: String,
@@ -17,16 +18,16 @@ mod actix_impl {
     use futures::future::{Ready, err, ok};
 
     use super::HeaderToken;
-    use crate::errors::{SharedError, SharedErrorStatus};
+    use crate::errors::{Error, ErrorStatus};
 
     impl ActixFromRequest for HeaderToken {
-        type Error = SharedError;
-        type Future = Ready<Result<Self, SharedError>>;
+        type Error = Error;
+        type Future = Ready<Result<Self, Error>>;
 
         fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
             let Some(raw_data) = req.headers().get("token") else {
-                return err(SharedError {
-                    status:  SharedErrorStatus::Unauthorized,
+                return err(Error {
+                    status: ErrorStatus::Unauthorized,
                     message: "Token not found in header under key 'token'".to_string(),
                 });
             };
@@ -34,8 +35,8 @@ mod actix_impl {
             let message = match raw_data.to_str() {
                 Ok(token) => token.to_string(),
                 Err(_) => {
-                    return err(SharedError {
-                        status:  SharedErrorStatus::Unauthorized,
+                    return err(Error {
+                        status: ErrorStatus::Unauthorized,
                         message: "token not a valid string".to_string(),
                     });
                 }
@@ -52,29 +53,29 @@ mod axum_impl {
     use axum::http::request::Parts;
 
     use super::HeaderToken;
-    use crate::errors::{SharedError, SharedErrorStatus};
+    use crate::errors::{Error, ErrorStatus};
 
     impl<S> AxumFromRequestParts<S> for HeaderToken
     where
         S: Send + Sync,
     {
-        type Rejection = SharedError;
+        type Rejection = Error;
 
         async fn from_request_parts(
             parts: &mut Parts,
             _state: &S,
         ) -> Result<Self, Self::Rejection> {
-            let raw_data = parts.headers.get("token").ok_or_else(|| SharedError {
-                status:  SharedErrorStatus::Unauthorized,
+            let raw_data = parts.headers.get("token").ok_or_else(|| Error {
+                status: ErrorStatus::Unauthorized,
                 message: "Token not found in header under key 'token'".to_string(),
             })?;
 
             let message = raw_data
                 .to_str()
                 .map_err(|_| {
-                    SharedError::new(
+                    Error::new(
                         "Token is not a valid string".to_string(),
-                        SharedErrorStatus::Unauthorized,
+                        ErrorStatus::Unauthorized,
                     )
                 })?
                 .to_string();
@@ -93,17 +94,17 @@ mod rocket_impl {
     use rocket::request::Request;
 
     use super::HeaderToken;
-    use crate::errors::{SharedError, SharedErrorStatus};
+    use crate::errors::{Error, ErrorStatus};
 
     #[rocket::async_trait]
     impl<'r> RocketFromRequest<'r> for HeaderToken {
-        type Error = SharedError;
+        type Error = Error;
 
         async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
             match req.headers().get_one("token") {
                 Some(token) => Outcome::Success(Self::new(token.to_string())),
-                None => Outcome::Error((Status::Unauthorized, SharedError {
-                    status:  SharedErrorStatus::Unauthorized,
+                None => Outcome::Error((Status::Unauthorized, Error {
+                    status: ErrorStatus::Unauthorized,
                     message: "token not in header under key 'token'".to_string(),
                 })),
             }

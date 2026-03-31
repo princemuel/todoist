@@ -3,10 +3,11 @@ use hyper::Request;
 use hyper::body::{Buf, Incoming};
 use serde::de::DeserializeOwned;
 
-use crate::errors::{SharedError, SharedErrorStatus};
+use crate::errors::{Error, ErrorStatus};
 use crate::safe_eject;
 
-/// Extracts the body from a request and deserializes it into a struct.
+/// Extracts the body from a request and
+/// deserializes it into a struct.
 ///
 /// # Arguments
 /// * `req` - The request containing the JSON body.
@@ -16,15 +17,14 @@ use crate::safe_eject;
 ///
 /// # Errors
 ///
-/// Will return a [`SharedError`] if it fails to parse the json body
-pub async fn extract_body<S: DeserializeOwned>(
-    req: Request<Incoming>,
-) -> Result<S, SharedError> {
-    let buffer = safe_eject!(req.collect().await, SharedErrorStatus::BadRequest)?.aggregate();
+/// Will return a [`Error`] if it fails to parse
+/// the json body
+pub async fn extract_body<S: DeserializeOwned>(req: Request<Incoming>) -> Result<S, Error> {
+    let buffer = safe_eject!(req.collect().await, ErrorStatus::BadRequest)?.aggregate();
 
     let body = safe_eject!(
         serde_json::from_reader(buffer.reader()),
-        SharedErrorStatus::BadRequest,
+        ErrorStatus::BadRequest,
         "Failed to parse JSON body"
     )?;
 
