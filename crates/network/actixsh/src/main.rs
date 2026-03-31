@@ -3,8 +3,7 @@ use core::net::Ipv4Addr;
 use std::io;
 
 use actix_web::{App, HttpServer};
-
-mod actions;
+use actixsh::actions;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
