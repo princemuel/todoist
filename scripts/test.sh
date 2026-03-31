@@ -54,32 +54,32 @@ EOF
 
 # cargo build -p actixsh
 # cargo run -p actixsh &
-# # cargo run -p axumsh &
-# # cargo run -p hypersh &
-# # cargo run -p rocketsh &
+# cargo run -p axumsh &
+# cargo run -p hypersh &
+# cargo run -p rocketsh &
 # PID=$!
 sleep 1
 echo "Server started with PID: $PID"
 
 curl -X POST http://127.0.0.1:8080/api/v1/tasks \
   -H "Content-Type: application/json" \
-  -d '{"title": "writing", "status": "pending"}' >>output.local.txt
+  -d '{"title": "writing", "status": "PENDING"}' >>output.local.txt
 
 echo "" >>output.local.txt
 
 curl -X POST http://127.0.0.1:8080/api/v1/tasks \
   -H "Content-Type: application/json" \
-  -d '{"title": "coding", "status": "pending"}' >>output.local.txt
+  -d '{"title": "coding", "status": "PENDING"}' >>output.local.txt
 
 echo "" >>output.local.txt
 
-curl -X DELETE http://127.0.0.1:8080/api/v1/delete/coding >>output.local.txt
+curl -X DELETE http://127.0.0.1:8080/api/v1/tasks/coding >>output.local.txt
 
 echo "" >>output.local.txt
 
 curl -X PATCH http://127.0.0.1:8080/api/v1/tasks \
   -H "Content-Type: application/json" \
   -H "token: some token" \
-  -d '{"title": "writing", "status": "done"}' >>output.local.txt
+  -d '{"title": "writing", "status": "DONE"}' >>output.local.txt
 
 kill "$PID"
