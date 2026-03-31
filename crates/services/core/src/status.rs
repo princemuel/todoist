@@ -2,22 +2,20 @@ use core::fmt;
 use core::str::FromStr;
 
 use serde::{Deserialize, Serialize};
-use shared::errors::{SharedError, SharedErrorStatus};
+use shared::errors::{Error, ErrorStatus};
 
-#[derive(Clone, Copy, Default, PartialEq, Eq, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "lowercase")]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Deserialize, Serialize)]
 pub enum TaskStatus {
-    Done,
-    #[default]
-    Pending,
+    DONE,
+    PENDING,
 }
 
 impl TaskStatus {
     #[must_use]
     pub(crate) const fn as_str(self) -> &'static str {
         match self {
-            Self::Pending => "pending",
-            Self::Done => "done",
+            Self::PENDING => "PENDING",
+            Self::DONE => "DONE",
         }
     }
 }
@@ -27,15 +25,15 @@ impl fmt::Display for TaskStatus {
 }
 
 impl FromStr for TaskStatus {
-    type Err = SharedError;
+    type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "pending" => Ok(Self::Pending),
-            "done" => Ok(Self::Done),
-            _ => Err(SharedError::new(
+        match s.to_uppercase().as_str() {
+            "DONE" => Ok(TaskStatus::DONE),
+            "PENDING" => Ok(TaskStatus::PENDING),
+            _ => Err(Error::new(
                 "invalid status".to_string(),
-                SharedErrorStatus::BadRequest,
+                ErrorStatus::BadRequest,
             )),
         }
     }
@@ -48,20 +46,20 @@ mod tests {
 
     #[test]
     fn test_task_status() {
-        assert_eq!(TaskStatus::Done.to_string(), "done");
-        assert_eq!(TaskStatus::Pending.to_string(), "pending");
+        assert_eq!(TaskStatus::DONE.to_string(), "done");
+        assert_eq!(TaskStatus::PENDING.to_string(), "pending");
 
-        let done = format!("{}", TaskStatus::Done);
-        let pending = format!("{}", TaskStatus::Pending);
+        let done = format!("{}", TaskStatus::DONE);
+        let pending = format!("{}", TaskStatus::PENDING);
 
-        assert_eq!(done, "done");
-        assert_eq!(pending, "pending");
+        assert_eq!(done, "DONE");
+        assert_eq!(pending, "PENDING");
 
-        let done = TaskStatus::Done.to_string();
-        let pending = TaskStatus::Pending.to_string();
+        let done = TaskStatus::DONE.to_string();
+        let pending = TaskStatus::PENDING.to_string();
 
-        assert_eq!(done, "done");
-        assert_eq!(pending, "pending");
+        assert_eq!(done, "DONE");
+        assert_eq!(pending, "PENDING");
     }
 
     #[test]
@@ -70,8 +68,8 @@ mod tests {
         let pending = "Pending".to_string();
         let invalid = "INVALID".to_string();
 
-        assert_eq!(pending.parse::<TaskStatus>().unwrap(), TaskStatus::Pending);
-        assert_eq!(done.parse::<TaskStatus>().unwrap(), TaskStatus::Done);
+        assert_eq!(pending.parse::<TaskStatus>().unwrap(), TaskStatus::PENDING);
+        assert_eq!(done.parse::<TaskStatus>().unwrap(), TaskStatus::DONE);
         assert!(invalid.parse::<TaskStatus>().is_err());
     }
 }

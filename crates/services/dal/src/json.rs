@@ -6,7 +6,7 @@ use std::io::{Read, Write};
 
 use serde::Serialize;
 use serde::de::DeserializeOwned;
-use shared::errors::{SharedError, SharedErrorStatus};
+use shared::errors::{Error, ErrorStatus};
 use shared::safe_eject;
 
 /// Opens a file.
@@ -15,11 +15,13 @@ use shared::safe_eject;
 /// - `path` - An optional string slice that specifies the path to the file.
 ///
 /// # Returns
-/// a file handle to perform read/write operations with.
+/// a file handle to perform read/write
+/// operations with.
 ///
 /// # Errors
-/// Returns a [`SharedError`] if the file cannot be opened or created.
-fn file_handle(path: Option<&str>) -> Result<File, SharedError> {
+/// Returns a [`Error`] if the file cannot be
+/// opened or created.
+fn read_handle(path: Option<&str>) -> Result<File, Error> {
     let path = match path {
         Some(path) => path,
         None => &env::var("DATABASE_URL").unwrap_or_else(|_| "db.local.json".to_string()),
@@ -30,9 +32,38 @@ fn file_handle(path: Option<&str>) -> Result<File, SharedError> {
             .read(true)
             .write(true)
             .create(true)
+            .truncate(false)
+            .open(path),
+        ErrorStatus::Unknown,
+        "Error writing resource to database"
+    )
+}
+
+/// Opens a file.
+///
+/// # Arguments
+/// - `path` - An optional string slice that specifies the path to the file.
+///
+/// # Returns
+/// a file handle to perform read/write
+/// operations with.
+///
+/// # Errors
+/// Returns a [`Error`] if the file cannot be
+/// opened or created.
+fn write_handle(path: Option<&str>) -> Result<File, Error> {
+    let path = match path {
+        Some(path) => path,
+        None => &env::var("DATABASE_URL").unwrap_or_else(|_| "db.local.json".to_string()),
+    };
+
+    safe_eject!(
+        OpenOptions::new()
+            .write(true)
+            .create(true)
             .truncate(true)
             .open(path),
-        SharedErrorStatus::Unknown,
+        ErrorStatus::Unknown,
         "Error writing resource to database"
     )
 }
@@ -43,18 +74,18 @@ fn file_handle(path: Option<&str>) -> Result<File, SharedError> {
 /// a hashmap of items.
 ///
 /// # Errors
-/// Returns an [`SharedError`] if the file cannot be read or if the JSON is
-/// malformed.
-pub fn find_many<T>() -> Result<HashMap<String, T>, SharedError>
+/// Returns an [`Error`] if the file cannot be
+/// read or if the JSON is malformed.
+pub fn find_many<T>() -> Result<HashMap<String, T>, Error>
 where
     T: DeserializeOwned,
 {
-    let mut f = file_handle(None)?;
+    let mut f = read_handle(None)?;
     let mut buffer = String::new();
 
     safe_eject!(
         f.read_to_string(&mut buffer),
-        SharedErrorStatus::Unknown,
+        ErrorStatus::Unknown,
         "Error reading database"
     )?;
 
@@ -63,55 +94,55 @@ where
         return Ok(HashMap::with_capacity(0));
     }
 
-    let items = safe_eject!(serde_json::from_str(buffer), SharedErrorStatus::Unknown)?;
-
+    let items = safe_eject!(serde_json::from_str(buffer), ErrorStatus::Unknown)?;
     Ok(items)
 }
 
 /// Gets an item from the JSON file.
 ///
 /// # Arguments
-/// - `id` - a string slice that specifies the id of the item.
+/// - `name` - a string slice that specifies the name of the item.
 ///
 /// # Returns
 /// an item.
 ///
 /// # Errors
-/// Returns an [`SharedError`] with [`SharedErrorStatus::NotFound`] if
-/// no item with the given `id` exists.
-pub fn find_one<T>(id: &str) -> Result<T, SharedError>
+/// Returns an [`Error`] with
+/// [`ErrorStatus::NotFound`] if no item with
+/// the given `name` exists.
+pub fn find_one<T>(name: &str) -> Result<T, Error>
 where
     T: DeserializeOwned + Clone,
 {
     let items = find_many::<T>()?;
-    match items.get(id) {
-        None => Err(SharedError::new(
-            format!("Resource with id '{id}' not found"),
-            SharedErrorStatus::NotFound,
-        )),
+    match items.get(name) {
         Some(item) => Ok(item.clone()),
+        None => Err(Error::new(
+            format!("Resource with name '{name}' not found"),
+            ErrorStatus::NotFound,
+        )),
     }
 }
 
 /// # Errors
-/// Returns an [`SharedError`] if the file cannot be written or if
-/// serialization fails.
-pub fn create_many<T, S>(items: &HashMap<String, T, S>) -> Result<(), SharedError>
+/// Returns an [`Error`] if the file cannot be
+/// written or if serialization fails.
+pub fn create_many<T, S>(items: &HashMap<String, T, S>) -> Result<(), Error>
 where
     T: Serialize,
     S: BuildHasher,
 {
-    let mut file = file_handle(None)?;
+    let mut file = write_handle(None)?;
 
     let body = safe_eject!(
         serde_json::to_string_pretty(items),
-        SharedErrorStatus::Unknown,
+        ErrorStatus::Unknown,
         "Error serializing JSON before saving tasks"
     )?;
 
     safe_eject!(
         file.write_all(body.as_bytes()),
-        SharedErrorStatus::Unknown,
+        ErrorStatus::Unknown,
         "Error writing tasks to JSON to file"
     )
 }
@@ -119,42 +150,42 @@ where
 /// Saves an item to the JSON file.
 ///
 /// # Arguments
-/// - `id` - a string slice that specifies the id of the item.
+/// - `name` - a string slice that specifies the name of the item.
 /// - `item` - a reference to the item to save.
 ///
 /// # Errors
-/// Returns an [`SharedError`] if reading, serializing, or writing to the
-/// file fails.
-pub fn create_one<T>(id: &str, item: &T) -> Result<(), SharedError>
+/// Returns an [`Error`] if reading,
+/// serializing, or writing to the file fails.
+pub fn create_one<T>(name: &str, item: &T) -> Result<(), Error>
 where
     T: Serialize + DeserializeOwned + Clone,
 {
     let mut items = find_many::<T>().unwrap_or_else(|_| HashMap::with_capacity(1));
-    items.insert(id.to_string(), item.clone());
+    items.insert(name.to_string(), item.clone());
     create_many(&items)
 }
 
 /// Deletes an item from the JSON file.
 ///
 /// # Arguments
-/// - `id` - a string slice that specifies the id of the item to delete.
+/// - `name` - a string slice that specifies the name of the item to delete.
 ///
 /// # Errors
-/// Returns an [`SharedError`] if reading, serializing, or writing to the
-/// file fails.
-pub fn delete_one<T>(id: &str) -> Result<T, SharedError>
+/// Returns an [`Error`] if reading,
+/// serializing, or writing to the file fails.
+pub fn delete_one<T>(name: &str) -> Result<T, Error>
 where
     T: Serialize + DeserializeOwned + Clone,
 {
     let mut items = find_many::<T>().unwrap_or_else(|_| HashMap::with_capacity(0));
-    match items.remove(id) {
+    match items.remove(name) {
         Some(item) => {
             create_many(&items)?;
             Ok(item)
         }
-        None => Err(SharedError::new(
-            format!("Resource with id {id} not found",),
-            SharedErrorStatus::NotFound,
+        None => Err(Error::new(
+            format!("Resource with name {name} not found",),
+            ErrorStatus::NotFound,
         )),
     }
 }
@@ -168,10 +199,10 @@ mod tests {
     #[test]
     #[cfg(feature = "json")]
     fn test_file_handle() {
-        let file = file_handle(None);
+        let file = read_handle(None);
         assert!(file.is_ok());
 
-        let file = file_handle(Some("./non_existent_file.json"));
+        let file = read_handle(Some("./non_existent_file.json"));
         assert!(file.is_ok());
     }
 

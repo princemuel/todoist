@@ -9,7 +9,7 @@ use crate::status::TaskStatus;
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Task {
     /// The title of the task
-    pub title:  String,
+    pub title: String,
     /// The status of the task
     pub status: TaskStatus,
 }
@@ -17,8 +17,8 @@ pub struct Task {
 impl fmt::Display for Task {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.status {
-            TaskStatus::Done => write!(f, "Done: {}", self.title),
-            TaskStatus::Pending => write!(f, "Pending: {}", self.title),
+            TaskStatus::DONE => write!(f, "Done: {}", self.title),
+            TaskStatus::PENDING => write!(f, "Pending: {}", self.title),
         }
     }
 }
@@ -29,10 +29,11 @@ pub struct Tasks {
     /// A list of pending tasks
     pub pending: Vec<Task>,
     /// A list of done tasks
-    pub done:    Vec<Task>,
+    pub done: Vec<Task>,
 }
 
-/// Converts a `HashMap` of tasks to a [`Tasks`] struct.
+/// Converts a `HashMap` of tasks to a [`Tasks`]
+/// struct.
 ///
 /// # Arguments
 /// - `items`: A [`HashMap`] of tasks.
@@ -41,9 +42,9 @@ pub struct Tasks {
 /// An [`Tasks`] struct.
 impl From<HashMap<String, Task>> for Tasks {
     fn from(items: HashMap<String, Task>) -> Self {
-        let (done, pending) = items
+        let (pending, done) = items
             .into_values()
-            .partition(|item| matches!(item.status, TaskStatus::Done));
+            .partition(|item| matches!(item.status, TaskStatus::PENDING));
 
         Self { pending, done }
     }
@@ -57,8 +58,8 @@ mod tests {
     #[test]
     fn test_display() {
         let task = Task {
-            title:  "Test".to_string(),
-            status: TaskStatus::Pending,
+            title: "Test".to_string(),
+            status: TaskStatus::PENDING,
         };
         assert_eq!(format!("{task}"), "Pending: Test");
     }
@@ -67,12 +68,12 @@ mod tests {
     fn test_from_hashmap() {
         let mut tasks = HashMap::new();
         tasks.insert("1".to_string(), Task {
-            title:  "Test".to_string(),
-            status: TaskStatus::Pending,
+            title: "Test".to_string(),
+            status: TaskStatus::PENDING,
         });
         tasks.insert("2".to_string(), Task {
-            title:  "Test".to_string(),
-            status: TaskStatus::Done,
+            title: "Test".to_string(),
+            status: TaskStatus::DONE,
         });
 
         let tasks = Tasks::from(tasks);
