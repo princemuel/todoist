@@ -1,7 +1,9 @@
+#:tombi schema.strict = false
+#:schema https://www.schemastore.org/cargo.json
+# https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
 [workspace]
 members = ["crates/services/*", "crates/shared", "crates/network/*"]
 resolver = "3"
-# default-members = ["web"]
 
 [workspace.lints.rust]
 elided-lifetimes-in-paths = "warn"
