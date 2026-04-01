@@ -18,7 +18,7 @@ async fn main() -> io::Result<()> {
             .wrap(cors)
             .default_service(web::route().to(catch_all))
     })
-    .bind((Ipv4Addr::UNSPECIFIED, 8000))?
+    .bind((Ipv4Addr::UNSPECIFIED, 8001))?
     .run()
     .await
 }
@@ -26,7 +26,7 @@ async fn main() -> io::Result<()> {
 fn index() -> HttpResponse {
     HttpResponse::Ok()
         .content_type("text/html")
-        .body(include_str!("../index.html"))
+        .body(include_str!("../../site/dist/index.html"))
 }
 
 #[derive(RustEmbed)]

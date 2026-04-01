@@ -14,5 +14,5 @@ use shared::errors::Error;
 /// All the items in the task list
 pub async fn create(payload: Json<Task>) -> Result<HttpResponse, Error> {
     create_one(payload.into_inner())?;
-    Ok(HttpResponse::Ok().json(get_all_core()?))
+    Ok(HttpResponse::Created().json(get_all_core()?))
 }

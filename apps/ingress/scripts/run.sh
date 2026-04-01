@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# File: ingress/scripts/run_server.sh
-# navigate to directory
+
+set -euoE pipefail
+
 SCRIPTPATH="$(
   cd "$(dirname "$0")" || exit
   pwd -P
@@ -11,11 +12,11 @@ cd ../..
 
 cd site || exit
 
-npm install
+pnpm install
 
-npm run build
+pnpm run build
 
 cd ../ingress || exit
 
-cargo clean
+# cargo clean
 cargo run
