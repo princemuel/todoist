@@ -2,6 +2,7 @@ import { createTask } from "@/actions/crud";
 import { useState } from "react";
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rerender: (response: any) => void;
 }
 

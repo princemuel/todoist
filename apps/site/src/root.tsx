@@ -1,13 +1,11 @@
 import { getAllTasks } from "@/actions/crud";
 import { Form } from "@/components/form";
 import { TaskItem } from "@/components/task-item";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 
 import init, { rust_generate_button_text } from "../interface/pkg/interface.js";
 
 export default function App() {
-  const id = useId();
-
   const [data, setData] = useState<Tasks | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isWasmReady, setIsWasmReady] = useState(false);
@@ -69,9 +67,9 @@ export default function App() {
         <ul>
           {data.pending.map((item) => (
             <TaskItem
-              key={id + item.title + item.status}
+              key={item.id}
+              id={item.id}
               title={item.title}
-              id={id + item.title}
               message={rustButtonText ? rustButtonText(item.status) : item.status}
               rerender={rerender}
             />
@@ -82,9 +80,9 @@ export default function App() {
         <ul>
           {data.done.map((item) => (
             <TaskItem
-              key={id + item.title + item.status}
+              key={item.id}
+              id={item.id}
               title={item.title}
-              id={id + item.title}
               message={rustButtonText ? rustButtonText(item.status) : item.status}
               rerender={rerender}
             />

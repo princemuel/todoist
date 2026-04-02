@@ -1,4 +1,9 @@
 interface Task {
+  id: string;
+  title: string;
+  status: TaskStatus;
+}
+interface CreateTaskPayload {
   title: string;
   status: TaskStatus;
 }

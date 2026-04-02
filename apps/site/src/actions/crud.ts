@@ -10,12 +10,12 @@ export const getAllTasks = async () => {
 };
 
 export const createTask = async (title: string) => {
-  const payload = { title, status: TaskStatus.PENDING };
-  return await post<Task, Tasks>(taskURL.url, payload, 201);
+  const payload: CreateTaskPayload = { title, status: TaskStatus.PENDING };
+  return await post<CreateTaskPayload, Tasks>(taskURL.url, payload, 201);
 };
 
-export const updateTask = async (title: string, status: TaskStatus) => {
-  const payload = { title, status };
+export const updateTask = async (id: string, title: string, status: TaskStatus) => {
+  const payload: Task = { id, title, status };
   return await patch<Task, Tasks>(taskURL.url, payload, 200);
 };
 

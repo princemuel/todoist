@@ -8,11 +8,11 @@ interface Props {
   rerender: (response: any) => void;
 }
 
-export const TaskItem: React.FC<Props> = ({ title, id, message, rerender }) => {
+export const TaskItem: React.FC<Props> = ({ id, title, message, rerender }) => {
   const sendRequest = async () => {
     if (message === "edit") {
-      await updateTask(title, TaskStatus.DONE).then((response) => {
-        rerender(response);
+      await updateTask(id, title, TaskStatus.DONE).then((res) => {
+        rerender(res);
       });
     } else {
       await deleteTask(title).then((response) => {
