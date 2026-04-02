@@ -2,7 +2,13 @@
 #:schema https://www.schemastore.org/cargo.json
 # https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
 [workspace]
-members = ["crates/services/*", "crates/shared", "crates/network/*", "apps/ingress"]
+members = [
+  "crates/services/*",
+  "crates/shared",
+  "crates/network/*",
+  "apps/ingress",
+  "apps/site/interface",
+]
 resolver = "3"
 
 [workspace.lints.rust]
@@ -52,7 +58,7 @@ engine = { path = "crates/services/core" }
 shared = { path = "crates/shared" }
 
 [profile.release]
-opt-level = "s"
+opt-level = 2
 lto = "thin"
 codegen-units = 1
 panic = "abort"

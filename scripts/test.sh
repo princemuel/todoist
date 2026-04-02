@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
+set -Eeuo pipefail
 
 # navigate to directory
-SCRIPTPATH="$(
+SCRIPT_PATH="$(
   cd "$(dirname "$0")" || exit
   pwd -P
 )"
-cd "$SCRIPTPATH" || exit
+cd "$SCRIPT_PATH" || exit
 
 cd ..
 

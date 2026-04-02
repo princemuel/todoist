@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
+set -Eeuo pipefail
 
-set -euoE pipefail
-
-SCRIPTPATH="$(
+SCRIPT_PATH="$(
   cd "$(dirname "$0")" || exit
   pwd -P
 )"
 
-cd "$SCRIPTPATH" || exit
+cd "$SCRIPT_PATH" || exit
 cd ../..
 
 cd site || exit
