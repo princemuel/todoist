@@ -21,7 +21,7 @@ sqlx    = { version = "0.8", features = [
   "tls-rustls",
   "uuid"
 ], optional = true }
-uuid    = { version = "1", features = ["serde", "v4", "v7"] }
+uuid    = { workspace = true, features = ["serde", "v7"] }
 
 [features]
 default       = ["sqlx-postgres"]

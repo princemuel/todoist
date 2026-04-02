@@ -36,6 +36,7 @@ rocket         = "0.5"
 serde          = "1"
 serde_json     = "1"
 tokio          = "1"
+uuid           = "1"
 
 ## #######################
 auth      = { path = "crates/services/auth" }
