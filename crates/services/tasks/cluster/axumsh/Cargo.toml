@@ -6,8 +6,9 @@ license.workspace = true
 publish           = false
 
 [dependencies]
-axum      = { workspace = true }
-task_core = { workspace = true }
-tokio     = { workspace = true, features = ["full"] }
+axum  = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
 
-shared = { workspace = true, features = ["axum"] }
+shared    = { workspace = true, features = ["axum"] }
+task_core = { workspace = true }
+task_dal  = { workspace = true }

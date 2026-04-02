@@ -1,7 +1,9 @@
 use rocket::serde::json::Json;
 use shared::errors::Error;
+use shared::token::HeaderToken;
 use task_core::actions::get::{get_all as get_all_core, get_by_name as get_by_name_core};
-use task_core::models::{Task, Tasks};
+use task_dal::tasks::descriptors::SqlxPostgresDescriptor;
+use task_dal::tasks::schema::{Task, Tasks};
 
 /// Gets all tasks.
 ///
@@ -9,10 +11,14 @@ use task_core::models::{Task, Tasks};
 /// A `Result` containing the response to the
 /// request or an error
 #[get("/tasks")]
-pub async fn get_all() -> Result<Json<Tasks>, Error> { Ok(Json(get_all_core()?)) }
+pub async fn get_all(token: HeaderToken) -> Result<Json<Tasks>, Error> {
+    Ok(Json(get_all_core::<SqlxPostgresDescriptor>().await?))
+}
 
 /// Gets a task by name.
 #[get("/tasks/<name>")]
-pub async fn get_by_name(name: &str) -> Result<Json<Task>, Error> {
-    Ok(Json(get_by_name_core(name)?))
+pub async fn get_by_name(token: HeaderToken, name: &str) -> Result<Json<Task>, Error> {
+    Ok(Json(
+        get_by_name_core::<SqlxPostgresDescriptor>(name).await?,
+    ))
 }

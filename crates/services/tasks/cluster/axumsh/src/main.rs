@@ -2,11 +2,13 @@
 use core::net::{Ipv4Addr, SocketAddr};
 
 use axum::Router;
+use task_dal::migrations::run_migrations;
 
 mod actions;
 
 #[tokio::main]
 async fn main() {
+    run_migrations().await;
     // Build our application with a route
     let app = actions::views(Router::new());
 

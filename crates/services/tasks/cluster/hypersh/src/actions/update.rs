@@ -1,5 +1,3 @@
-use task_core::actions::get::get_all as get_all_core;
-use task_core::actions::update::update as update_one;
 use http_body_util::Full;
 use hyper::body::{Bytes, Incoming};
 use hyper::{Request, Response, header};
@@ -7,6 +5,10 @@ use shared::errors::{Error, ErrorStatus};
 use shared::hyper_utils::extract_body::extract_body;
 use shared::safe_eject;
 use shared::token::HeaderToken;
+use task_core::actions::get::get_all as get_all_core;
+use task_core::actions::update::update as update_core;
+use task_dal::tasks::transactions::get::GetAll;
+use task_dal::tasks::transactions::update::UpdateOne;
 
 /// Creates a task.
 ///
@@ -15,14 +17,14 @@ use shared::token::HeaderToken;
 ///
 /// # Returns
 /// All the items in the task list
-pub async fn update(
+pub async fn update<T: UpdateOne + GetAll>(
     req: Request<Incoming>,
     token: HeaderToken,
 ) -> Result<Response<Full<Bytes>>, Error> {
     let payload = extract_body(req).await?;
-    update_one(payload)?;
+    update_core::<T>(payload).await?;
     let body = safe_eject!(
-        serde_json::to_string(&get_all_core()?),
+        serde_json::to_string(&get_all_core::<T>().await?),
         ErrorStatus::Unknown
     )?;
     safe_eject!(

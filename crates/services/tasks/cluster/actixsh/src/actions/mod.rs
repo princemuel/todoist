@@ -6,7 +6,7 @@ pub mod update;
 use actix_web::web::{ServiceConfig, delete, get, patch, post, scope};
 use task_dal::tasks::descriptors::SqlxPostgresDescriptor;
 
-use crate::actions::delete::delete as delete_core;
+use crate::actions::delete::delete as delete_by_name;
 use crate::actions::get::get_by_name;
 
 pub fn views(app: &mut ServiceConfig) { serve(app); }
@@ -29,7 +29,7 @@ fn serve(app: &mut ServiceConfig) {
             )
             .route(
                 "/tasks/{name}",
-                delete().to(delete_core::<SqlxPostgresDescriptor>),
+                delete().to(delete_by_name::<SqlxPostgresDescriptor>),
             ),
     );
 }

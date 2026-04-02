@@ -9,8 +9,10 @@ use hyper::{Method, Request, Response, body};
 use hyper_util::rt::TokioIo;
 use shared::extract_hyper_header_token;
 use shared::hyper_utils::extract_header::extract_token;
+use task_dal::migrations::run_migrations;
 use tokio::{net, task};
 mod actions;
+use task_dal::tasks::descriptors::SqlxPostgresDescriptor;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -40,29 +42,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 /// A `Result` containing the response to the
 /// request or an error
 async fn handle(req: Request<body::Incoming>) -> Result<Response<Full<Bytes>>, Infallible> {
+    run_migrations().await;
+
     let path = req.uri().path();
     // Split the path into segments
     let segments: Vec<_> = path.trim_start_matches('/').split('/').collect();
 
     let response = match (req.method(), segments.as_slice()) {
-        (&Method::GET, ["api", "v1", "tasks"]) => actions::get::get_all().await,
+        (&Method::GET, ["api", "v1", "tasks"]) => {
+            let token = extract_hyper_header_token!(&req);
+            actions::get::get_all::<SqlxPostgresDescriptor>(token).await
+        }
         (&Method::POST, ["api", "v1", "tasks"]) => {
-            // Extract and parse the JSON body
-            actions::create::create(req).await
+            let token = extract_hyper_header_token!(&req);
+            actions::create::create::<SqlxPostgresDescriptor>(req, token).await
         }
         (&Method::PATCH, ["api", "v1", "tasks"]) => {
             let token = extract_hyper_header_token!(&req);
             // Extract and parse the JSON body
-            actions::update::update(req, token).await
+            actions::update::update::<SqlxPostgresDescriptor>(req, token).await
         }
 
         (&Method::GET, ["api", "v1", "tasks", name]) => {
-            // Here `name` is the extracted name segment from the URL
-            actions::get::get_by_name(name).await
+            let token = extract_hyper_header_token!(&req);
+            actions::get::get_by_name::<SqlxPostgresDescriptor>(name, token).await
         }
         (&Method::DELETE, ["api", "v1", "tasks", name]) => {
-            // Here `name` is the extracted name segment from the URL
-            actions::delete::delete(name).await
+            let token = extract_hyper_header_token!(&req);
+            actions::delete::delete::<SqlxPostgresDescriptor>(name, token).await
         }
         _ => Ok(not_found()),
     };

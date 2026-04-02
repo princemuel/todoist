@@ -1,10 +1,13 @@
 use axum::extract::Json;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use task_core::actions::create::create as create_one;
-use task_core::actions::get::get_all as get_all_core;
-use task_core::models::Task;
 use shared::errors::Error;
+use shared::token::HeaderToken;
+use task_core::actions::create::create as create_core;
+use task_core::actions::get::get_all as get_all_core;
+use task_dal::tasks::schema::CreateTask;
+use task_dal::tasks::transactions::create::SaveOne;
+use task_dal::tasks::transactions::get::GetAll;
 
 /// Creates a task.
 ///
@@ -13,7 +16,10 @@ use shared::errors::Error;
 ///
 /// # Returns
 /// All the items in the task list
-pub async fn create(Json(payload): Json<Task>) -> Result<impl IntoResponse, Error> {
-    create_one(payload)?;
-    Ok((StatusCode::OK, Json(get_all_core()?)))
+pub async fn create<T: SaveOne + GetAll>(
+    token: HeaderToken,
+    Json(payload): Json<CreateTask>,
+) -> Result<impl IntoResponse, Error> {
+    create_core::<T>(payload).await?;
+    Ok((StatusCode::OK, Json(get_all_core::<T>().await?)))
 }

@@ -45,7 +45,7 @@ async fn sqlx_postgres_delete_one(title: String) -> Result<Task, Error> {
 #[cfg(feature = "json")]
 #[allow(clippy::unused_async)]
 async fn json_delete_one(title: String) -> Result<Task, Error> {
-    let mut items = find_many().unwrap_or_else(|_| HashMap::new());
+    let mut items = find_many().unwrap_or_else(|_| HashMap::with_capacity(0));
     let item = items
         .remove(&title)
         .ok_or_else(|| Error::new("Item not found".to_string(), ErrorStatus::NotFound))?;

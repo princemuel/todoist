@@ -1,9 +1,10 @@
-use task_core::actions::get::get_all as get_all_core;
-use task_core::actions::update::update as update_one;
-use task_core::models::{Task, Tasks};
 use rocket::serde::json::Json;
 use shared::errors::Error;
 use shared::token::HeaderToken;
+use task_core::actions::get::get_all as get_all_core;
+use task_core::actions::update::update as update_core;
+use task_dal::tasks::descriptors::SqlxPostgresDescriptor;
+use task_dal::tasks::schema::{Task, Tasks};
 
 /// Creates a task.
 ///
@@ -14,6 +15,6 @@ use shared::token::HeaderToken;
 /// All the items in the task list
 #[patch("/tasks", data = "<payload>")]
 pub async fn update(token: HeaderToken, payload: Json<Task>) -> Result<Json<Tasks>, Error> {
-    update_one(payload.into_inner())?;
-    Ok(Json(get_all_core()?))
+    update_core::<SqlxPostgresDescriptor>(payload.into_inner()).await?;
+    Ok(Json(get_all_core::<SqlxPostgresDescriptor>().await?))
 }

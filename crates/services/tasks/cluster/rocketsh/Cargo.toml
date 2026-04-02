@@ -6,7 +6,8 @@ license.workspace = true
 publish           = false
 
 [dependencies]
+rocket = { workspace = true }
+
 shared    = { workspace = true, features = ["rocket"] }
 task_core = { workspace = true }
-
-rocket = { workspace = true }
+task_dal  = { workspace = true }

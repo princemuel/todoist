@@ -1,5 +1,6 @@
 use actix_web::{HttpRequest, HttpResponse};
 use shared::errors::{Error, ErrorStatus};
+use shared::token::HeaderToken;
 use task_core::actions::delete::delete as delete_core;
 use task_core::actions::get::get_all as get_all_core;
 use task_dal::tasks::transactions::delete::DeleteOne;
@@ -12,7 +13,10 @@ use task_dal::tasks::transactions::get::GetAll;
 ///
 /// # Returns
 /// List of task items
-pub async fn delete<T: DeleteOne + GetAll>(req: HttpRequest) -> Result<HttpResponse, Error> {
+pub async fn delete<T: DeleteOne + GetAll>(
+    token: HeaderToken,
+    req: HttpRequest,
+) -> Result<HttpResponse, Error> {
     match req.match_info().get("name") {
         Some(name) => {
             delete_core::<T>(name).await?;

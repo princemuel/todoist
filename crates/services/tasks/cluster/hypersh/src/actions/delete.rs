@@ -1,10 +1,13 @@
-use task_core::actions::delete::delete as delete_core;
-use task_core::actions::get::get_all as get_all_core;
 use http_body_util::Full;
 use hyper::body::Bytes;
 use hyper::{Response, header};
 use shared::errors::{Error, ErrorStatus};
 use shared::safe_eject;
+use shared::token::HeaderToken;
+use task_core::actions::delete::delete as delete_core;
+use task_core::actions::get::get_all as get_all_core;
+use task_dal::tasks::transactions::delete::DeleteOne;
+use task_dal::tasks::transactions::get::GetAll;
 
 /// Deletes an item from the tasks list by name.
 ///
@@ -13,11 +16,14 @@ use shared::safe_eject;
 ///
 /// # Returns
 /// List of task items
-pub async fn delete(name: &str) -> Result<Response<Full<Bytes>>, Error> {
-    delete_core(name)?;
+pub async fn delete<T: DeleteOne + GetAll>(
+    name: &str,
+    token: HeaderToken,
+) -> Result<Response<Full<Bytes>>, Error> {
+    delete_core::<T>(name).await?;
 
     let body = safe_eject!(
-        serde_json::to_string(&get_all_core()?),
+        serde_json::to_string(&get_all_core::<T>().await?),
         ErrorStatus::Unknown
     )?;
 
