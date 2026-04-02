@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "start": "serve dist",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && pnpm build-wasm && pnpm trace-wasm",
+    "build-wasm": "./scripts/build-wasm.sh",
+    "trace-wasm": "./scripts/trace-wasm.sh",
     "lint": "eslint .",
     "test": "vitest",
     "test:run": "vitest run",

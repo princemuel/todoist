@@ -1,18 +1,16 @@
-import { deleteTask, updateTask } from "@/actions/crud";
-import { TaskStatus } from "@/actions/crud";
+import { deleteTask, TaskStatus, updateTask } from "@/actions/crud";
 
 interface Props {
   id: string;
   title: string;
-  status: string;
+  message: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rerender: (response: any) => void;
 }
 
-export const TaskItem: React.FC<Props> = ({ title, status, id, rerender }) => {
-  const buttonText = status === "PENDING" ? "edit" : "delete";
-
+export const TaskItem: React.FC<Props> = ({ title, id, message, rerender }) => {
   const sendRequest = async () => {
-    if (buttonText === "edit") {
+    if (message === "edit") {
       await updateTask(title, TaskStatus.DONE).then((response) => {
         rerender(response);
       });
@@ -24,11 +22,11 @@ export const TaskItem: React.FC<Props> = ({ title, status, id, rerender }) => {
   };
 
   return (
-    <article className="itemContainer" id={id}>
+    <li className="itemContainer" id={id}>
       <p>{title}</p>
       <button type="button" className="actionButton" onClick={sendRequest}>
-        {buttonText}
+        {message}
       </button>
-    </article>
+    </li>
   );
 };

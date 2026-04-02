@@ -16,7 +16,7 @@ export const createTask = async (title: string) => {
 
 export const updateTask = async (title: string, status: TaskStatus) => {
   const payload = { title, status };
-  return await patch<Task, Tasks>(taskURL.forId(title), payload, 200);
+  return await patch<Task, Tasks>(taskURL.url, payload, 200);
 };
 
 export const deleteTask = async (id: string) => {
