@@ -13,7 +13,7 @@ cd site || exit
 
 pnpm install
 
-pnpm run build
+pnpm build
 
 cd ../ingress || exit
 

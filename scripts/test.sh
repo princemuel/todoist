@@ -23,20 +23,20 @@ actix)
   ;;
 axum)
   echo "Building and running Axum server..."
-  cargo build -p axumsh
-  cargo run -p axumsh &
+  cargo build -p taxum
+  cargo run -p taxum &
   PID=$!
   ;;
 hyper)
   echo "Building and running Hyper server..."
-  cargo build -p hypersh
-  cargo run -p hypersh &
+  cargo build -p typer
+  cargo run -p typer &
   PID=$!
   ;;
 rocket)
   echo "Building and running Rocket server..."
-  cargo build -p rocketsh
-  cargo run -p rocketsh &
+  cargo build -p tocket
+  cargo run -p tocket &
   PID=$!
   ;;
 *)
@@ -55,8 +55,8 @@ EOF
 
 # cargo build -p tactix
 # cargo run -p tactix &
-# cargo run -p axumsh &
-# cargo run -p hypersh &
+# cargo run -p taxum &
+# cargo run -p typer &
 # cargo run -p rocketsh &
 # PID=$!
 sleep 1
