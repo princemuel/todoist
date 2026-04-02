@@ -1,19 +1,31 @@
 #:schema https://www.schemastore.org/cargo.json
+
 [package]
+name              = "dal"
+version           = "0.0.0"
 edition.workspace = true
 license.workspace = true
-name = "dal"
-publish = false
-version = "0.0.0"
-
-[features]
-json = ["serde_json", "serde"]
+publish           = false
 
 [dependencies]
-serde = { workspace = true, optional = true }
+serde      = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
 
 shared = { workspace = true }
+sqlx   = { version = "0.8", features = [
+  "macros",
+  "migrate",
+  "postgres",
+  "runtime-tokio",
+  "tls-rustls",
+  "uuid"
+], optional = true }
+uuid   = { version = "1", features = ["serde", "v4", "v7"] }
+
+[features]
+default       = ["sqlx-postgres"]
+json          = ["serde", "serde_json"]
+sqlx-postgres = ["sqlx"]
 
 [lints]
 workspace = true

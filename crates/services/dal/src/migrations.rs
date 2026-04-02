@@ -1,0 +1,14 @@
+use crate::connections::sqlx_postgres::POSTGRES_POOL;
+
+#[allow(clippy::expect_used, clippy::missing_panics_doc)]
+pub async fn run_migrations() {
+    println!("Migrating database...");
+
+    let mut migrations = sqlx::migrate!("./migrations");
+    migrations.ignore_missing = true;
+    migrations
+        .run(&*POSTGRES_POOL)
+        .await
+        .expect("Failed to run migrations");
+    println!("Database migrations completed: {:?}", ());
+}
