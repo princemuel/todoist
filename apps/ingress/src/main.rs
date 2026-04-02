@@ -4,10 +4,12 @@ use std::path::Path;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpRequest, HttpResponse, HttpServer, Responder, web};
+use dal::migrations::run_migrations;
 use rust_embed::RustEmbed;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
+    run_migrations().await;
     HttpServer::new(|| {
         let cors = Cors::default()
             .allow_any_origin()

@@ -18,4 +18,6 @@ pnpm run build
 cd ../ingress || exit
 
 # cargo clean
+export "$(cat .env | xargs)"
+
 cargo run
