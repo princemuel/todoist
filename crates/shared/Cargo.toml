@@ -1,27 +1,27 @@
 [package]
-name = "shared"
-version = "0.1.0"
-edition.workspace = true
-license.workspace = true
-publish.workspace = true
+name                 = "shared"
+version              = "0.1.0"
+edition.workspace    = true
 repository.workspace = true
-
-[features]
-actix = ["dep:actix-web"]
-rocket = ["dep:rocket"]
-axum = ["dep:axum"]
-hyper = ["dep:hyper", "dep:serde_json", "dep:http-body-util"]
+license.workspace    = true
+publish.workspace    = true
 
 [dependencies]
-actix-web = { workspace = true, optional = true }
-rocket = { workspace = true, features = ["json"], optional = true }
-axum = { workspace = true, optional = true }
-hyper = { workspace = true, features = ["full"], optional = true }
-serde_json = { workspace = true, optional = true }
+actix-web      = { workspace = true, optional = true }
+axum           = { workspace = true, optional = true }
+futures        = "0.3"
 http-body-util = { workspace = true, optional = true }
-serde = { workspace = true, features = ["derive"] }
-thiserror = "2"
-futures = "0.3"
+hyper          = { workspace = true, features = ["full"], optional = true }
+rocket         = { workspace = true, features = ["json"], optional = true }
+serde          = { workspace = true, features = ["derive"] }
+serde_json     = { workspace = true, optional = true }
+thiserror      = "2"
+
+[features]
+actix  = ["dep:actix-web"]
+axum   = ["dep:axum"]
+hyper  = ["dep:http-body-util", "dep:hyper", "dep:serde_json"]
+rocket = ["dep:rocket"]
 
 [lints]
 workspace = true

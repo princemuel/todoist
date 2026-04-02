@@ -1,7 +1,7 @@
 #:schema https://www.schemastore.org/cargo.json
 
 [package]
-name              = "dal"
+name              = "task_dal"
 version           = "0.0.0"
 edition.workspace = true
 license.workspace = true

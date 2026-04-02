@@ -1,5 +1,5 @@
-use dal::tasks::schema::Task;
-use dal::tasks::transactions::update::UpdateOne;
+use task_dal::tasks::schema::Task;
+use task_dal::tasks::transactions::update::UpdateOne;
 use shared::errors::Error;
 
 /// .

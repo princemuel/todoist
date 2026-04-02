@@ -1,12 +1,12 @@
 use actix_web::HttpResponse;
 use actix_web::web::Json;
-use dal::tasks::schema::Task;
-use dal::tasks::transactions::get::GetAll;
-use dal::tasks::transactions::update::UpdateOne;
-use engine::actions::get::get_all as get_all_core;
-use engine::actions::update::update as update_core;
 use shared::errors::Error;
 use shared::token::HeaderToken;
+use task_core::actions::get::get_all as get_all_core;
+use task_core::actions::update::update as update_core;
+use task_dal::tasks::schema::Task;
+use task_dal::tasks::transactions::get::GetAll;
+use task_dal::tasks::transactions::update::UpdateOne;
 
 /// Updates a task.
 ///

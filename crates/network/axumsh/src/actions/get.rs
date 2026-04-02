@@ -2,7 +2,7 @@ use axum::Json;
 use axum::extract::Path;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use engine::actions::get::{get_all as get_all_core, get_by_name as get_by_name_core};
+use task_core::actions::get::{get_all as get_all_core, get_by_name as get_by_name_core};
 use shared::errors::Error;
 
 /// Gets all tasks.

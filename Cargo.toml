@@ -8,7 +8,8 @@ members  = [
   "apps/ingress",
   "apps/site/interface",
   "crates/network/*",
-  "crates/services/*",
+  "crates/services/auth/*",
+  "crates/services/tasks/*",
   "crates/shared",
 ]
 
@@ -34,9 +35,12 @@ serde_json     = "1"
 tokio          = "1"
 
 ## #######################
-dal    = { path = "crates/services/dal" }
-engine = { path = "crates/services/core" }
-shared = { path = "crates/shared" }
+auth      = { path = "crates/services/auth" }
+auth_core = { path = "crates/services/auth/core" }
+auth_dal  = { path = "crates/services/auth/dal" }
+shared    = { path = "crates/shared" }
+task_core = { path = "crates/services/tasks/core" }
+task_dal  = { path = "crates/services/tasks/dal" }
 
 [workspace.lints.rust]
 elided-lifetimes-in-paths = "warn"

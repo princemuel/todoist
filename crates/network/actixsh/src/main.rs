@@ -4,7 +4,7 @@ use std::io;
 
 use actix_web::{App, HttpServer};
 use actixsh::actions;
-use dal::migrations::run_migrations;
+use task_dal::migrations::run_migrations;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {

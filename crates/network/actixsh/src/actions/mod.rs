@@ -4,7 +4,7 @@ pub mod get;
 pub mod update;
 
 use actix_web::web::{ServiceConfig, delete, get, patch, post, scope};
-use dal::tasks::descriptors::SqlxPostgresDescriptor;
+use task_dal::tasks::descriptors::SqlxPostgresDescriptor;
 
 use crate::actions::delete::delete as delete_core;
 use crate::actions::get::get_by_name;

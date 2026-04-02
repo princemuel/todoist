@@ -1,12 +1,12 @@
 [package]
-name = "rocketsh"
+name              = "rocketsh"
+version           = "0.0.0"
 edition.workspace = true
 license.workspace = true
-publish = false
-version = "0.0.0"
+publish           = false
 
 [dependencies]
-engine = { workspace = true }
-shared = { workspace = true, features = ["rocket"] }
+shared    = { workspace = true, features = ["rocket"] }
+task_core = { workspace = true }
 
 rocket = { workspace = true }

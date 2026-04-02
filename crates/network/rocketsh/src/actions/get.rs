@@ -1,7 +1,7 @@
-use engine::actions::get::{get_all as get_all_core, get_by_name as get_by_name_core};
-use engine::models::{Task, Tasks};
 use rocket::serde::json::Json;
 use shared::errors::Error;
+use task_core::actions::get::{get_all as get_all_core, get_by_name as get_by_name_core};
+use task_core::models::{Task, Tasks};
 
 /// Gets all tasks.
 ///

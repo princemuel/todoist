@@ -1,9 +1,9 @@
 use axum::extract::Json;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use engine::actions::get::get_all as get_all_core;
-use engine::actions::update::update as update_one;
-use engine::models::Task;
+use task_core::actions::get::get_all as get_all_core;
+use task_core::actions::update::update as update_one;
+use task_core::models::Task;
 use shared::errors::Error;
 use shared::token::HeaderToken;
 

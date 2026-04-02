@@ -7,14 +7,14 @@ license.workspace    = true
 publish.workspace    = true
 
 [dependencies]
-actix-cors = "0.7.1"
+actix-cors = "0.7"
 actix-web  = { workspace = true }
 mime_guess = "2"
 rust-embed = "8"
 tokio      = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
-dal    = { workspace = true, features = ["sqlx-postgres"] }
-server = { package = "actixsh", path = "../../crates/network/actixsh/" }
+server   = { package = "actixsh", path = "../../crates/network/actixsh/" }
+task_dal = { workspace = true, features = ["sqlx-postgres"] }
 
 [lints]
 workspace = true

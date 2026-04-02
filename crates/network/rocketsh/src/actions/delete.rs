@@ -1,8 +1,8 @@
-use engine::actions::delete::delete as delete_core;
-use engine::actions::get::get_all as get_all_core;
-use engine::models::Tasks;
 use rocket::serde::json::Json;
 use shared::errors::Error;
+use task_core::actions::delete::delete as delete_core;
+use task_core::actions::get::get_all as get_all_core;
+use task_core::models::Tasks;
 
 /// Deletes an item from the tasks list by name.
 ///

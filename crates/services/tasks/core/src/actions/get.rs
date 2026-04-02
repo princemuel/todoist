@@ -1,5 +1,5 @@
-use dal::tasks::schema::{Task, Tasks};
-use dal::tasks::transactions::get::GetAll;
+use task_dal::tasks::schema::{Task, Tasks};
+use task_dal::tasks::transactions::get::GetAll;
 use shared::errors::{Error, ErrorStatus};
 
 /// .

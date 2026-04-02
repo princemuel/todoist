@@ -1,9 +1,9 @@
 use actix_web::{HttpRequest, HttpResponse};
-use dal::tasks::transactions::delete::DeleteOne;
-use dal::tasks::transactions::get::GetAll;
-use engine::actions::delete::delete as delete_core;
-use engine::actions::get::get_all as get_all_core;
 use shared::errors::{Error, ErrorStatus};
+use task_core::actions::delete::delete as delete_core;
+use task_core::actions::get::get_all as get_all_core;
+use task_dal::tasks::transactions::delete::DeleteOne;
+use task_dal::tasks::transactions::get::GetAll;
 
 /// Deletes an item from the tasks list by name.
 ///
