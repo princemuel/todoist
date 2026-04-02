@@ -1,5 +1,5 @@
 [package]
-name              = "hypersh"
+name              = "typer"
 version           = "0.0.0"
 edition.workspace = true
 license.workspace = true

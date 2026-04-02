@@ -17,8 +17,8 @@ framework=${1:-actix}
 case $framework in
 actix)
   echo "Building and running Actix server..."
-  cargo build -p actixsh
-  cargo run -p actixsh &
+  cargo build -p tactix
+  cargo run -p tactix &
   PID=$!
   ;;
 axum)
@@ -53,8 +53,8 @@ cat <<EOF >db.local.json
 {}
 EOF
 
-# cargo build -p actixsh
-# cargo run -p actixsh &
+# cargo build -p tactix
+# cargo run -p tactix &
 # cargo run -p axumsh &
 # cargo run -p hypersh &
 # cargo run -p rocketsh &

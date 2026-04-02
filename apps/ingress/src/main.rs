@@ -4,8 +4,8 @@ use std::path::Path;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpRequest, HttpResponse, HttpServer, Responder, web};
-use task_dal::migrations::run_migrations;
 use rust_embed::RustEmbed;
+use task_dal::migrations::run_migrations;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {

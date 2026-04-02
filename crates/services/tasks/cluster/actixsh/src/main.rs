@@ -3,7 +3,7 @@ use core::net::Ipv4Addr;
 use std::io;
 
 use actix_web::{App, HttpServer};
-use actixsh::actions;
+use tactix::actions;
 use task_dal::migrations::run_migrations;
 
 #[tokio::main]

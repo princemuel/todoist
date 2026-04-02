@@ -7,9 +7,12 @@ resolver = "3"
 members  = [
   "apps/ingress",
   "apps/site/interface",
-  "crates/network/*",
-  "crates/services/auth/*",
-  "crates/services/tasks/*",
+  "crates/services/auth/cluster/*",
+  "crates/services/auth/core",
+  "crates/services/auth/dal",
+  "crates/services/tasks/cluster/*",
+  "crates/services/tasks/core",
+  "crates/services/tasks/dal",
   "crates/shared",
 ]
 
