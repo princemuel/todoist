@@ -13,7 +13,6 @@ use uuid::Uuid;
 #[cfg_attr(feature = "sqlx-postgres", derive(sqlx::FromRow))]
 pub struct Task {
     pub id: Uuid,
-    pub public_id: Uuid,
     pub title: String,
     pub status: String,
 }

@@ -34,19 +34,14 @@ impl UpdateOne for JsonFileDescriptor {
 
 #[cfg(feature = "sqlx-postgres")]
 async fn sqlx_postgres_update_one(item: Task) -> Result<Task, Error> {
-    let item = sqlx::query_as::<_, Task>(
-        "
-        UPDATE to_do_items
-        SET title = $1, status = $2
-        WHERE id = $3
-        RETURNING *",
-    )
-    .bind(item.title)
-    .bind(item.status.clone())
-    .bind(item.id)
-    .fetch_one(&*POSTGRES_POOL)
-    .await
-    .map_err(|e| Error::new(e.to_string(), ErrorStatus::Unknown))?;
+    let item =
+        sqlx::query_as("UPDATE tasks SET title = $1, status = $2 WHERE id = $3 RETURNING *")
+            .bind(item.title)
+            .bind(item.status.clone())
+            .bind(item.id)
+            .fetch_one(&*POSTGRES_POOL)
+            .await
+            .map_err(|e| Error::new(e.to_string(), ErrorStatus::Unknown))?;
     Ok(item)
 }
 

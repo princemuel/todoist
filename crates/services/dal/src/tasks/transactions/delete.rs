@@ -34,7 +34,7 @@ impl DeleteOne for JsonFileDescriptor {
 
 #[cfg(feature = "sqlx-postgres")]
 async fn sqlx_postgres_delete_one(title: String) -> Result<Task, Error> {
-    let item = sqlx::query_as::<_, Task>("DELETE FROM tasks WHERE title = $1 RETURNING *")
+    let item = sqlx::query_as("DELETE FROM tasks WHERE title = $1 RETURNING *")
         .bind(title)
         .fetch_one(&*POSTGRES_POOL)
         .await

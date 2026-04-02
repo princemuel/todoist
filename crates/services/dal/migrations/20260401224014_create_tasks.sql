@@ -1,7 +1,6 @@
 -- Add migration script here
 CREATE TABLE IF NOT EXISTS tasks (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
-    public_id pub_id UNIQUE,
     ---
     title VARCHAR(255) UNIQUE NOT NULL,
     status VARCHAR(7) NOT NULL,

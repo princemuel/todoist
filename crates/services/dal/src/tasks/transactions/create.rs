@@ -34,7 +34,7 @@ impl SaveOne for JsonFileDescriptor {
 
 #[cfg(feature = "sqlx-postgres")]
 async fn sqlx_postgres_save_one(item: CreateTask) -> Result<Task, Error> {
-    let item = sqlx::query_as("INSERT INTO items (title, status) VALUES ($1, $2) RETURNING *")
+    let item = sqlx::query_as("INSERT INTO tasks (title, status) VALUES ($1, $2) RETURNING *")
         .bind(item.title)
         .bind(item.status.to_string())
         .fetch_one(&*POSTGRES_POOL)
@@ -47,11 +47,9 @@ async fn sqlx_postgres_save_one(item: CreateTask) -> Result<Task, Error> {
 #[allow(clippy::unused_async)]
 async fn json_save_one(item: CreateTask) -> Result<Task, Error> {
     use uuid::Uuid;
-
     let mut items = find_many().unwrap_or_else(|_| HashMap::with_capacity(1));
     let item = Task {
         id: Uuid::now_v7(),
-        public_id: Uuid::new_v4(),
         title: item.title,
         status: item.status.to_string(),
     };
