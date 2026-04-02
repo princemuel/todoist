@@ -1,10 +1,8 @@
-#[cfg(feature = "json_fs")]
-use dal::json::create_one;
+use dal::tasks::schema::{CreateTask, Task};
+use dal::tasks::transactions::create::SaveOne;
 use shared::errors::Error;
 
-use crate::models::Task;
-
-pub fn create(item: Task) -> Result<Task, Error> {
-    create_one(&item.title.clone(), &item)?;
+pub async fn create<T: SaveOne>(item: CreateTask) -> Result<Task, Error> {
+    let item = T::save_one(item).await?;
     Ok(item)
 }

@@ -1,23 +1,13 @@
-#[cfg(feature = "json_fs")]
-use dal::json::{create_many, find_many};
-use shared::errors::{Error, ErrorStatus};
-
-use crate::models::Task;
+use dal::tasks::schema::Task;
+use dal::tasks::transactions::update::UpdateOne;
+use shared::errors::Error;
 
 /// .
 ///
 /// # Errors
 ///
 /// This function will return an error if saving to the db fails.
-pub fn update(item: Task) -> Result<(), Error> {
-    let mut items = find_many()?;
-    if !items.contains_key(&item.title) {
-        return Err(Error::new(
-            format!("Resource with name {} not found", item.title),
-            ErrorStatus::NotFound,
-        ));
-    }
-
-    items.insert(item.title.clone(), item);
-    create_many(&items)
+pub async fn update<T: UpdateOne>(item: Task) -> Result<(), Error> {
+    T::update_one(item).await?;
+    Ok(())
 }

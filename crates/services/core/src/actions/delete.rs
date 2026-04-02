@@ -1,7 +1,7 @@
-#[cfg(feature = "json_fs")]
-use dal::json::delete_one;
+use dal::tasks::transactions::delete::DeleteOne;
 use shared::errors::Error;
 
-use crate::models::Task;
-
-pub fn delete(id: &str) -> Result<Task, Error> { delete_one(id) }
+pub async fn delete<T: DeleteOne>(id: &str) -> Result<(), Error> {
+    T::delete_one(id.to_string()).await?;
+    Ok(())
+}
