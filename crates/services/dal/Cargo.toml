@@ -11,8 +11,9 @@ publish           = false
 serde      = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
 
-shared = { workspace = true }
-sqlx   = { version = "0.8", features = [
+dotenvy = { workspace = true }
+shared  = { workspace = true }
+sqlx    = { version = "0.8", features = [
   "macros",
   "migrate",
   "postgres",
@@ -20,7 +21,7 @@ sqlx   = { version = "0.8", features = [
   "tls-rustls",
   "uuid"
 ], optional = true }
-uuid   = { version = "1", features = ["serde", "v4", "v7"] }
+uuid    = { version = "1", features = ["serde", "v4", "v7"] }
 
 [features]
 default       = ["sqlx-postgres"]

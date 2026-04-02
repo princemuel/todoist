@@ -5,7 +5,9 @@ use sqlx::postgres::{PgPool, PgPoolOptions};
 
 #[allow(clippy::expect_used)]
 pub static POSTGRES_POOL: LazyLock<PgPool> = LazyLock::new(|| {
-    let conn_url = env::var("DATABASE_URL").unwrap_or_default();
+    dotenvy::dotenv().ok();
+    let conn_url = env::var("DATABASE_URL")
+        .unwrap_or("postgresql://user:password@localhost:5432/dbname".to_string());
     let max_connections = env::var("POOL_MAX_CONNECTIONS")
         .ok()
         .and_then(|s| s.trim().parse().ok())
