@@ -1,0 +1,16 @@
+# add config settings for the development environment here…
+debug = true
+
+[application]
+host_v4 = "127.0.0.1"
+host_v6 = "::1"
+
+[database]
+host                 = "127.0.0.1"
+pool_max_connections = 5
+pool_min_connections = 1
+require_ssl          = false
+
+[cache]
+host = "127.0.0.1"
+port = 6379

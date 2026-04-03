@@ -1,12 +1,19 @@
 [package]
-name = "settings"
-version = "0.1.0"
-edition.workspace = true
+name                 = "settings"
+version              = "0.1.0"
+edition.workspace    = true
 repository.workspace = true
-license.workspace = true
-publish.workspace = true
+license.workspace    = true
+publish.workspace    = true
 
 [dependencies]
+dotenvy = { workspace = true }
+figment = { version = "0.10", features = ["env", "toml"] }
+secrecy = { workspace = true, features = ["serde"] }
+serde   = { workspace = true }
+sqlx    = { workspace = true, features = ["postgres"] }
+
+shared = { workspace = true }
 
 [lints]
 workspace = true

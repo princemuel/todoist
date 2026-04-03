@@ -1,0 +1,43 @@
+# add default config settings here…
+debug = false
+
+[application]
+host_v4 = "0.0.0.0"
+host_v6 = "::1"
+port    = 8080
+timeout = 10
+
+# Populated via env var: APP_APPLICATION__BASE_URL
+base_url = ""
+
+[database]
+host                    = "127.0.0.1"
+name                    = "pennies"
+pool_acquire_timeout_ms = 2_000  # How long to wait for a free connection
+pool_idle_timeout_ms    = 300_000  # Drop idle connections after 10 min
+pool_max_lifetime_ms    = 1_800_000  # Recycle connections after 30 min
+port                    = 5432
+require_ssl             = false
+username                = "postgres"
+# password populated via env var: APP_DATABASE__PASSWORD
+
+[cache]
+# uri assembled in code from host/port, or overridden via APP_REDIS__URI
+
+[auth]
+# All secrets populated via env vars, never in files
+api_host        = "127.0.0.1"
+api_port        = 8081
+# APP_AUTH__JWT_SECRET
+# APP_AUTH__HMAC_SECRET
+jwt_expiry_secs = 3600
+
+[oauth.google]
+# APP_OAUTH__GOOGLE__CLIENT_ID
+# APP_OAUTH__GOOGLE__CLIENT_SECRET
+redirect_path = "/auth/google/callback"
+
+[oauth.github]
+# APP_OAUTH__GITHUB__CLIENT_ID
+# APP_OAUTH__GITHUB__CLIENT_SECRET
+redirect_path = "/auth/github/callback"

@@ -1,0 +1,18 @@
+# add config settings for the production environment here…
+debug = false
+
+[application]
+host_v4 = "0.0.0.0"
+# base_url set via APP_APPLICATION__BASE_URL=https://api.yourdomain.com
+
+[database]
+# host set via APP_DATABASE__HOST (your prod DB host)
+pool_max_connections = 10
+pool_min_connections = 2
+require_ssl          = true
+
+[cache]
+# host set via APP_REDIS__HOST (your prod Redis host)
+
+[auth]
+jwt_expiry_secs = 900  # Shorter expiry in production

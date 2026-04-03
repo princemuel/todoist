@@ -4,11 +4,10 @@ services:
     image: postgres:18-trixie
     restart: unless-stopped
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql
-    env_file:
-      .env
+    env_file: .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -20,6 +19,21 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.3.2
+    container_name: search_main
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
 
 volumes:
   pgdata:
