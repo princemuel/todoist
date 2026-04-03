@@ -4,11 +4,11 @@ use std::io;
 
 use actix_web::{App, HttpServer};
 use tactix::actions;
-use task_dal::migrations::run_migrations as run_task_migrations;
+use task_dal::migrations::run_migrations;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
-    run_task_migrations().await;
+    run_migrations().await;
 
     HttpServer::new(|| App::new().configure(actions::views))
         .workers(4)

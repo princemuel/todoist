@@ -10,9 +10,9 @@ publish.workspace    = true
 clap       = { workspace = true, features = ["derive"] }
 serde      = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
-task_dal   = { workspace = true, features = ["json"] }
 
-shared = { workspace = true }
+shared   = { workspace = true }
+task_dal = { workspace = true, features = ["json"] }
 
 [features]
 default = ["json_fs"]

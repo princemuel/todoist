@@ -1,6 +1,6 @@
-use core::future::Future;
 #[cfg(feature = "json")]
 use std::collections::HashMap;
+use std::future::Future;
 
 use shared::errors::Error;
 #[cfg(feature = "sqlx-postgres")]

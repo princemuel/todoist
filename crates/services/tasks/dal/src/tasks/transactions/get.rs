@@ -43,6 +43,15 @@ async fn sqlx_postgres_get_all() -> Result<Vec<Task>, Error> {
 async fn json_get_all() -> Result<Vec<Task>, Error> {
     let items = find_many().unwrap_or_else(|_| HashMap::with_capacity(0));
     let items = items.values().cloned().collect();
+    // let items = find_many::<Task>().unwrap_or_else(|_|
+    // HashMap::with_capacity(0)); let items = items
+    //     .iter()
+    //     .filter_map(|(key, item)| {
+    //         let id = key.split(':').nth(1)?.parse::<Uuid>().ok()?;
+    //         (id == "user_id").then(|| item.clone())
+    //     })
+    //     .collect();
+
     Ok(items)
 }
 
@@ -70,6 +79,7 @@ async fn sqlx_postgres_get_by_name(name: String) -> Result<Task, Error> {
         .await
         .map_err(|e| Error::new(e.to_string(), ErrorStatus::Unknown))?
         .ok_or_else(|| Error::new("Task not found".to_string(), ErrorStatus::NotFound))?;
+
     Ok(item)
 }
 #[cfg(feature = "json")]

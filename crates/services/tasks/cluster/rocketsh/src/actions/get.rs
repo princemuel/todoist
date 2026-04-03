@@ -18,7 +18,5 @@ pub async fn get_all(token: HeaderToken) -> Result<Json<Tasks>, Error> {
 /// Gets a task by name.
 #[get("/tasks/<name>")]
 pub async fn get_by_name(token: HeaderToken, name: &str) -> Result<Json<Task>, Error> {
-    Ok(Json(
-        get_by_name_core::<SqlxPostgresDescriptor>(name).await?,
-    ))
+    Ok(Json(get_by_name_core::<SqlxPostgresDescriptor>(name).await?))
 }
