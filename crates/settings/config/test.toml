@@ -1,1 +1,17 @@
-# add config settings for the test environment here…
+# Test configuration - test overrides only
+# These override values from Config.toml
+
+debug = false
+
+[server]
+port    = 9080  # Different port to avoid conflicts with dev
+timeout = 5
+
+[database]
+name                    = "todoist_test"
+pool_max_connections    = 2  # Limit connections in tests
+pool_acquire_timeout_ms = 2_000
+pool_idle_timeout_ms    = 60_000
+
+[cache]
+port = 6380  # Different port to avoid conflicts

@@ -1,16 +1,15 @@
-# add config settings for the development environment here…
+# Development configuration - local overrides only
+# These override values from Config.toml
+
 debug = true
 
-[application]
-host_v4 = "127.0.0.1"
-host_v6 = "::1"
+[auth]
+jwt_expiry_secs = 86400  # 24 hours for development convenience
 
 [database]
-host                 = "127.0.0.1"
-pool_max_connections = 5
-pool_min_connections = 1
-require_ssl          = false
+name                 = "todoist_dev"
+pool_idle_timeout_ms = 600_000  # Longer timeout in dev
 
-[cache]
-host = "127.0.0.1"
-port = 6379
+[server]
+timeout  = 30  # Longer timeout for debugging
+base_url = "http://localhost:8080"

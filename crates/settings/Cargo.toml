@@ -7,13 +7,12 @@ license.workspace    = true
 publish.workspace    = true
 
 [dependencies]
-dotenvy = { workspace = true }
-figment = { version = "0.10", features = ["env", "toml"] }
-secrecy = { workspace = true, features = ["serde"] }
-serde   = { workspace = true }
-sqlx    = { workspace = true, features = ["postgres"] }
-
-shared = { workspace = true }
+dotenvy   = { workspace = true }
+figment   = { version = "0.10", features = ["env", "toml"] }
+secrecy   = { workspace = true, features = ["serde"] }
+serde     = { workspace = true }
+sqlx      = { workspace = true, features = ["postgres"] }
+thiserror = { workspace = true }
 
 [lints]
 workspace = true

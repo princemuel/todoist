@@ -1,43 +1,49 @@
-# add default config settings here…
+# Default global configuration - shared across all environments
+# Environment-specific OVERRIDES (not duplicates) go in config/local.toml, prod.toml, test.toml
+# Secret values MUST be set via environment variables (see .env.example)
+#
+# How it works:
+# 1. Application loads this Config.toml as base
+# 2. Then loads environment-specific overrides from config/{LOCAL_ENV}.toml
+# 3. Finally loads secrets/runtime values from environment variables
+#
+# Only include values here if:
+# - They are used across ALL environments
+# - They are public (not secrets)
+# - They are true defaults (not override-specific)
+
 debug = false
 
-[application]
-host_v4 = "0.0.0.0"
-host_v6 = "::1"
-port    = 8080
-timeout = 10
-
-# Populated via env var: APP_APPLICATION__BASE_URL
-base_url = ""
-
-[database]
-host                    = "127.0.0.1"
-name                    = "pennies"
-pool_acquire_timeout_ms = 2_000  # How long to wait for a free connection
-pool_idle_timeout_ms    = 300_000  # Drop idle connections after 10 min
-pool_max_lifetime_ms    = 1_800_000  # Recycle connections after 30 min
-port                    = 5432
-require_ssl             = false
-username                = "postgres"
-# password populated via env var: APP_DATABASE__PASSWORD
-
-[cache]
-# uri assembled in code from host/port, or overridden via APP_REDIS__URI
-
 [auth]
-# All secrets populated via env vars, never in files
-api_host        = "127.0.0.1"
-api_port        = 8081
-# APP_AUTH__JWT_SECRET
-# APP_AUTH__HMAC_SECRET
+# Secrets MUST be set via environment variables:
+# - APP_AUTH__JWT_SECRET: Secret key for JWT signing
+# - APP_AUTH__HMAC_SECRET: Secret key for HMAC operations
 jwt_expiry_secs = 3600
 
-[oauth.google]
-# APP_OAUTH__GOOGLE__CLIENT_ID
-# APP_OAUTH__GOOGLE__CLIENT_SECRET
-redirect_path = "/auth/google/callback"
+[cache]
+# host: Set via APP_CACHE__HOST env var
+port = 6379
 
-[oauth.github]
-# APP_OAUTH__GITHUB__CLIENT_ID
-# APP_OAUTH__GITHUB__CLIENT_SECRET
-redirect_path = "/auth/github/callback"
+[elasticsearch]
+# host: Set via APP_ELASTICSEARCH__HOST env var
+port  = 9200
+index = "logs/_doc"
+
+[database]
+# host: Set via APP_DATABASE__HOST env var
+port                    = 5432
+name                    = "todoist"
+username                = "postgres"
+require_ssl             = false
+# password: Set via APP_DATABASE__PASSWORD env var
+pool_min_connections    = 1
+pool_max_connections    = 5
+pool_acquire_timeout_ms = 5_000
+pool_idle_timeout_ms    = 300_000
+pool_max_lifetime_ms    = 1_800_000
+
+[server]
+# host_v4/host_v6: Set via APP_SERVER__HOST or use defaults (127.0.0.1/:1)
+# base_url: Set via APP_SERVER__BASE_URL for custom domains/reverse proxies
+port    = 8080
+timeout = 10
