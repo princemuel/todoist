@@ -24,13 +24,16 @@
 //! - **`load_config()`**: Function to manually load configuration
 //! - **`SettingsError`**: Error type for configuration operations
 //! - **`SettingsResult<T>`**: Result type for configuration operations
-//! - **Sub-config types**: `ServerSettings`, `DatabaseSettings`,
-//!   `CacheSettings`, `ElasticSearchSettings`, `AuthSettings`
+//! - **Sub-config types**: `ServerSettings`, `CacheSettings`,
+//!   `ElasticSearchSettings`, `AuthSettings`
+//! - **`DatabaseSettings`**: Database configuration (requires `sqlx-postgres`
+//!   feature)
 
 use std::sync::LazyLock;
 
 pub use crate::auth::AuthSettings;
 pub use crate::cache::CacheSettings;
+#[cfg(feature = "sqlx-postgres")]
 pub use crate::database::DatabaseSettings;
 pub use crate::elasticsearch::ElasticSearchSettings;
 use crate::env::get_env;
@@ -48,13 +51,12 @@ pub use crate::settings::Settings;
 /// ```rust,no_run
 /// use settings::CONFIG;
 ///
+/// #[cfg(feature = "sqlx-postgres")]
 /// let db_url = CONFIG.database.url();
 /// let server_addr = CONFIG.server.addr_v4();
 /// ```
 pub static CONFIG: LazyLock<Settings> = LazyLock::new(|| {
-    load_config(get_env().unwrap_or_default()).unwrap_or_else(|e| {
-        eprintln!("Fatal: Failed to load config: {e}");
-        eprintln!("Application cannot start without valid configuration.");
-        std::process::exit(1);
-    })
+    get_env()
+        .and_then(load_config)
+        .unwrap_or_else(|e| panic!("Fatal: Failed to load config: {e}"))
 });

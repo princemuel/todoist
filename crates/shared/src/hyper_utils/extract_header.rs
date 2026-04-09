@@ -3,7 +3,7 @@ use hyper::body::{Bytes, Incoming};
 use hyper::{Request, Response};
 
 use crate::errors::{Error, ErrorStatus};
-use crate::token::HeaderToken;
+use crate::token::AuthToken;
 
 /// Extracts the token from the header of the
 /// request.
@@ -18,29 +18,25 @@ use crate::token::HeaderToken;
 ///
 /// Will return a [`Response`] if it fails to
 /// find or parse the token
-#[allow(clippy::result_large_err)]
-#[allow(clippy::unused_async)]
+#[expect(clippy::result_large_err)]
+#[expect(clippy::unused_async)]
 pub async fn extract_token(
     req: &Request<Incoming>,
-) -> Result<HeaderToken, Response<Full<Bytes>>> {
+) -> Result<AuthToken, Response<Full<Bytes>>> {
     let headers = req.headers();
 
     let token = match headers.get("token") {
-        Some(token) => token.to_str().map_err(|_| {
-            Error::new(
-                "token not a valid string".to_string(),
-                ErrorStatus::Unauthorized,
-            )
-            .into_hyper_response()
-        }),
+        Some(token) => token
+            .to_str()
+            .map_err(|e| Error::new(e.to_string(), ErrorStatus::Unauthorized).into_response()),
         None => Err(Error::new(
-            "token not found in request header".to_string(),
+            "token not found in request header".to_owned(),
             ErrorStatus::Unauthorized,
         )
-        .into_hyper_response()),
+        .into_response()),
     };
 
-    Ok(HeaderToken::new(token?.to_string()))
+    Ok(AuthToken::new(token?.to_owned()))
 }
 
 #[macro_export]

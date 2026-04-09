@@ -2,7 +2,7 @@ use axum::extract::Json;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use shared::errors::Error;
-use shared::token::HeaderToken;
+use shared::token::AuthToken;
 use task_core::actions::get::get_all as get_all_core;
 use task_core::actions::update::update as update_core;
 use task_dal::tasks::schema::Task;
@@ -17,7 +17,7 @@ use task_dal::tasks::transactions::update::UpdateOne;
 /// # Returns
 /// All the items in the task list
 pub async fn update<T: UpdateOne + GetAll>(
-    token: HeaderToken,
+    _token: AuthToken,
     Json(payload): Json<Task>,
 ) -> Result<impl IntoResponse, Error> {
     update_core::<T>(payload).await?;

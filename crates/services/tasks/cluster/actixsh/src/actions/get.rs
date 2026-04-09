@@ -1,6 +1,6 @@
 use actix_web::{HttpRequest, HttpResponse};
 use shared::errors::{Error, ErrorStatus};
-use shared::token::HeaderToken;
+use shared::token::AuthToken;
 use task_core::actions::get::{get_all as get_all_core, get_by_name as get_by_name_core};
 use task_dal::tasks::transactions::get::{GetAll, GetByName};
 
@@ -8,7 +8,7 @@ use task_dal::tasks::transactions::get::{GetAll, GetByName};
 ///
 /// # Returns
 /// A `Result` containing the response to the request or an error
-pub async fn get_all<T: GetAll>(token: HeaderToken) -> Result<HttpResponse, Error> {
+pub async fn get_all<T: GetAll>(_token: AuthToken) -> Result<HttpResponse, Error> {
     Ok(HttpResponse::Ok().json(get_all_core::<T>().await?))
 }
 
@@ -21,14 +21,14 @@ pub async fn get_all<T: GetAll>(token: HeaderToken) -> Result<HttpResponse, Erro
 /// An `HttpResponse` with a JSON body containing of the task specified in the
 /// URL
 pub async fn get_by_name<T: GetByName>(
-    token: HeaderToken,
+    _token: AuthToken,
     req: HttpRequest,
 ) -> Result<HttpResponse, Error> {
     let name = match req.match_info().get("name") {
         Some(name) => name,
         None => {
             return Err(Error::new(
-                "Name not provided".to_string(),
+                "Name not provided".to_owned(),
                 ErrorStatus::BadRequest,
             ));
         }

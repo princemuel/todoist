@@ -1,4 +1,5 @@
 use core::net::{Ipv4Addr, Ipv6Addr, SocketAddr, SocketAddrV4, SocketAddrV6};
+
 use serde::{Deserialize, Serialize};
 
 /// The server configuration.
@@ -7,7 +8,7 @@ use serde::{Deserialize, Serialize};
 /// the server binds to, the port, an optional base URL, and the request
 /// timeout. The struct is provided pre-defined by this project and cannot be
 /// changed. It **must** be used for the `server` field in the
-/// server-specific [`Settings`] struct:
+/// server-specific [`Settings`](crate::settings::Settings) struct:
 ///
 /// Both IPv4 and IPv6 addresses are supported simultaneously. If `base_url` is
 /// omitted from the configuration file it is derived automatically from the
@@ -66,6 +67,8 @@ impl ServerSettings {
     /// This can be used when creating a TCP listener:
     ///
     /// ```rust
+    /// use crate::settings::Settings;
+    ///
     /// let config: Settings = load_config(Env::Development);
     /// let listener = TcpListener::bind(config.server.addr_v4()).await?;
     /// ```
@@ -79,6 +82,8 @@ impl ServerSettings {
     /// This can be used when creating a TCP listener:
     ///
     /// ```rust
+    /// use crate::settings::Settings;
+    ///
     /// let config: Settings = load_config(Env::Development);
     /// let listener = TcpListener::bind(config.server.addr_v6()).await?;
     /// ```
@@ -92,6 +97,8 @@ impl ServerSettings {
     /// Convenient when spawning two listeners concurrently:
     ///
     /// ```rust
+    /// use crate::settings::Settings;
+    ///
     /// let config: Settings = load_config(Env::Development);
     /// let [v4, v6] = config.server.addrs();
     ///
@@ -109,7 +116,7 @@ impl ServerSettings {
     /// let mut config = ServerSettings::default(); // port = 8080
     /// assert_eq!(config.base_url(), "http://localhost:8080");
     ///
-    /// config.base_url = Some("https://api.myapp.com".to_string());
+    /// config.base_url = Some("https://api.myapp.com".to_owned());
     /// assert_eq!(config.base_url(), "https://api.myapp.com");
     /// ```
     #[must_use]

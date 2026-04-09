@@ -11,7 +11,8 @@
 //! - **env**: Environment detection and parsing
 //! - **loader**: Configuration file loading logic
 //! - **server**: Server-specific settings
-//! - **database**: Database connection and pool settings
+//! - **database**: Database connection and pool settings (requires
+//!   `sqlx-postgres` feature)
 //! - **cache**: Redis cache settings
 //! - **elasticsearch**: Elasticsearch integration settings
 //! - **auth**: Authentication and JWT settings
@@ -46,6 +47,7 @@
 //!
 //! fn main() {
 //!     // Access the globally loaded configuration
+//!     #[cfg(feature = "sqlx-postgres")]
 //!     let db_url = CONFIG.database.url();
 //!     let server_port = CONFIG.server.port;
 //! }
@@ -53,6 +55,7 @@
 
 mod auth;
 mod cache;
+#[cfg(feature = "sqlx-postgres")]
 mod database;
 mod elasticsearch;
 mod env;

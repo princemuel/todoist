@@ -1,3 +1,5 @@
+use core::net::Ipv4Addr;
+
 use serde::Deserialize;
 
 /// The Elasticsearch configuration.
@@ -8,7 +10,7 @@ use serde::Deserialize;
 pub struct ElasticSearchSettings {
     /// The Elasticsearch host, e.g. "localhost" or
     /// "elasticsearch.example.com"
-    pub host: String,
+    pub host: Ipv4Addr,
     /// The Elasticsearch port, e.g. 9200
     pub port: u16,
     /// The index path for logs, e.g. "logs/_doc"
@@ -23,9 +25,9 @@ impl ElasticSearchSettings {
     ///
     /// ```rust
     /// let es = ElasticSearchSettings {
-    ///     host: "127.0.0.1".to_string(),
+    ///     host: "127.0.0.1".into(),
     ///     port: 9200,
-    ///     index: "logs/_doc".to_string(),
+    ///     index: "logs/_doc".to_owned(),
     /// };
     /// assert_eq!(es.url(), "http://127.0.0.1:9200/logs/_doc");
     /// ```

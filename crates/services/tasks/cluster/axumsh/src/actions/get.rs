@@ -3,7 +3,7 @@ use axum::extract::Path;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use shared::errors::Error;
-use shared::token::HeaderToken;
+use shared::token::AuthToken;
 use task_core::actions::get::{get_all as get_all_core, get_by_name as get_by_name_core};
 use task_dal::tasks::transactions::get::{GetAll, GetByName};
 
@@ -12,7 +12,7 @@ use task_dal::tasks::transactions::get::{GetAll, GetByName};
 /// # Returns
 /// A `Result` containing the response to the
 /// request or an error
-pub async fn get_all<T: GetAll>(token: HeaderToken) -> Result<impl IntoResponse, Error> {
+pub async fn get_all<T: GetAll>(_token: AuthToken) -> Result<impl IntoResponse, Error> {
     Ok((StatusCode::OK, Json(get_all_core::<T>().await?)))
 }
 
@@ -25,7 +25,7 @@ pub async fn get_all<T: GetAll>(token: HeaderToken) -> Result<impl IntoResponse,
 /// An `HttpResponse` with a JSON body containing of the task specified in the
 /// URL
 pub async fn get_by_name<T: GetByName>(
-    token: HeaderToken,
+    _token: AuthToken,
     Path(name): Path<String>,
 ) -> Result<impl IntoResponse, Error> {
     Ok((StatusCode::OK, Json(get_by_name_core::<T>(&name).await?)))

@@ -1,6 +1,6 @@
 use dotenvy::dotenv;
 use figment::Figment;
-use figment::providers::{Env as FigmentEnv, Format, Serialized, Toml};
+use figment::providers::{Env as FigmentEnv, Format as _, Serialized, Toml};
 use serde::Deserialize;
 
 use crate::env::Env;
@@ -10,13 +10,13 @@ use crate::server::ServerSettings;
 /// Loads the server configuration for a particular environment.
 ///
 /// Depending on the environment, this function will behave differently:
-/// * for [`Env::Development`], the function will load env vars from a `.env`
+/// - for [`Env::Development`], the function will load env vars from a `.env`
 ///   file at the project root if that is present
-/// * for [`Env::Development`], the function will load env vars from
+/// - for [`Env::Development`], the function will load env vars from
 ///   `.env.local` file at the repository root if that is present
-/// * for [`Env::Test`], the function will load env vars from a `.env.test` file
+/// - for [`Env::Test`], the function will load env vars from a `.env.test` file
 ///   at the repository root if that is present
-/// * for [`Env::Production`], the function will only use the process env vars,
+/// - for [`Env::Production`], the function will only use the process env vars,
 ///   and not load a `.env` file (use your deployment platform's env vars
 ///   instead)
 ///
@@ -34,10 +34,10 @@ use crate::server::ServerSettings;
 /// # Errors
 ///
 /// Returns an error if:
-/// * the `.env` or `.env.test` file cannot be read or parsed
-/// * any of the configuration TOML files cannot be read or parsed
-/// * environment variables cannot be parsed into the expected types
-/// * deserialization into the type `T` fails
+/// - the `.env` or `.env.test` file cannot be read or parsed
+/// - any of the configuration TOML files cannot be read or parsed
+/// - environment variables cannot be parsed into the expected types
+/// - deserialization into the type `T` fails
 pub(crate) fn load_config<'a, T>(env: Env) -> SettingsResult<T>
 where
     T: Deserialize<'a>,
@@ -66,13 +66,11 @@ where
     let config_file = env.config_file();
 
     // Load configuration files (files are in crates/settings/ relative paths)
-    let config: T = Figment::new()
+    Figment::new()
         .merge(Serialized::defaults(ServerSettings::default()).key("server"))
         .merge(Toml::file("Config.toml"))                    // Global defaults
         .merge(Toml::file(format!("config/{config_file}")))  // Environment-specific overrides
         .merge(FigmentEnv::prefixed("APP_").split("__"))     // Environment variable overrides
         .extract()
-        .map_err(|e| SettingsError::ConfigError(e.to_string()))?;
-
-    Ok(config)
+        .map_err(|e| SettingsError::ConfigError(e.to_string()))
 }

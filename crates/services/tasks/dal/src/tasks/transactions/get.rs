@@ -1,6 +1,5 @@
 #[cfg(feature = "json")]
 use std::collections::HashMap;
-use std::future::Future;
 
 use shared::errors::Error;
 #[cfg(feature = "sqlx-postgres")]
@@ -39,7 +38,7 @@ async fn sqlx_postgres_get_all() -> Result<Vec<Task>, Error> {
     Ok(items)
 }
 #[cfg(feature = "json")]
-#[allow(clippy::unused_async)]
+#[expect(clippy::unused_async)]
 async fn json_get_all() -> Result<Vec<Task>, Error> {
     let items = find_many().unwrap_or_else(|_| HashMap::with_capacity(0));
     let items = items.values().cloned().collect();
@@ -61,13 +60,13 @@ pub trait GetByName {
 #[cfg(feature = "sqlx-postgres")]
 impl GetByName for SqlxPostgresDescriptor {
     fn get_by_name(name: &str) -> impl Future<Output = Result<Task, Error>> + Send {
-        sqlx_postgres_get_by_name(name.to_string())
+        sqlx_postgres_get_by_name(name.to_owned())
     }
 }
 #[cfg(feature = "json")]
 impl GetByName for JsonFileDescriptor {
     fn get_by_name(name: &str) -> impl Future<Output = Result<Task, Error>> + Send {
-        json_get_by_name(name.to_string())
+        json_get_by_name(name.to_owned())
     }
 }
 
@@ -78,17 +77,17 @@ async fn sqlx_postgres_get_by_name(name: String) -> Result<Task, Error> {
         .fetch_optional(&*POSTGRES_POOL)
         .await
         .map_err(|e| Error::new(e.to_string(), ErrorStatus::Unknown))?
-        .ok_or_else(|| Error::new("Task not found".to_string(), ErrorStatus::NotFound))?;
+        .ok_or_else(|| Error::new("Task not found".to_owned(), ErrorStatus::NotFound))?;
 
     Ok(item)
 }
 #[cfg(feature = "json")]
-#[allow(clippy::unused_async)]
+#[expect(clippy::unused_async)]
 async fn json_get_by_name(name: String) -> Result<Task, Error> {
     let items = find_many::<Task>().unwrap_or_else(|_| HashMap::with_capacity(0));
     items
         .values()
         .find(|task| task.title == name)
         .cloned()
-        .ok_or_else(|| Error::new("Task not found".to_string(), ErrorStatus::NotFound))
+        .ok_or_else(|| Error::new("Task not found".to_owned(), ErrorStatus::NotFound))
 }

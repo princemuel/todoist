@@ -1,9 +1,8 @@
 {
-  "javascript.updateImportsOnFileMove.enabled": "always",
+  "js/ts.experimental.useTsgo": false,
+  "js/ts.updateImportsOnFileMove.enabled": "always",
   "js/ts.implicitProjectConfig.target": "ESNext",
-  "typescript.experimental.useTsgo": false,
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "js/ts.preferences.preferTypeOnlyAutoImports": true,
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
   "editor.tabSize": 2,
@@ -12,9 +11,11 @@
   "editor.inlineSuggest.enabled": true,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
     "source.addMissingImports": "explicit",
-    "source.organizeImports.biome": "explicit"
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit",
+    "source.sortImports": "explicit",
+    "source.removeUnusedImports": "explicit"
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.quickSuggestions": { "strings": "on" },
@@ -50,9 +51,9 @@
   "[shellscript]": {
     "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode"
   },
-  "[svelte]": {
-    "editor.defaultFormatter": "svelte.svelte-vscode"
-  },
+  // "[svelte]": {
+  //   "editor.defaultFormatter": "svelte.svelte-vscode"
+  // },
   // Rust Analyzer settings
   "rust-analyzer.rustc.source": "discover",
   "rust-analyzer.assist.preferSelf": true,
@@ -75,6 +76,7 @@
   // Inlay Hints
   "rust-analyzer.inlayHints.typeHints.enable": false,
   "rust-analyzer.inlayHints.chainingHints.enable": false,
+  "rust-analyzer.inlayHints.parameterHints.enable": false,
 
   // Formatting with rustfmt
   "rust-analyzer.rustfmt.extraArgs": ["+nightly"],
@@ -111,5 +113,16 @@
   },
   "[wat]": {
     "editor.defaultFormatter": "gplane.wasm-language-tools"
-  }
+  },
+  "[nginx]": {
+    "editor.defaultFormatter": "ahmadalli.vscode-nginx-conf"
+  },
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "python.analysis.typeCheckingMode": "strict",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "python.analysis.autoImportCompletions": true
 }

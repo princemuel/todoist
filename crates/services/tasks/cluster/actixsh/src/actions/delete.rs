@@ -1,6 +1,6 @@
 use actix_web::{HttpRequest, HttpResponse};
 use shared::errors::{Error, ErrorStatus};
-use shared::token::HeaderToken;
+use shared::token::AuthToken;
 use task_core::actions::delete::delete as delete_core;
 use task_core::actions::get::get_all as get_all_core;
 use task_dal::tasks::transactions::delete::DeleteOne;
@@ -14,7 +14,7 @@ use task_dal::tasks::transactions::get::GetAll;
 /// # Returns
 /// List of task items
 pub async fn delete<T: DeleteOne + GetAll>(
-    token: HeaderToken,
+    _token: AuthToken,
     req: HttpRequest,
 ) -> Result<HttpResponse, Error> {
     match req.match_info().get("name") {
@@ -23,7 +23,7 @@ pub async fn delete<T: DeleteOne + GetAll>(
         }
         None => {
             return Err(Error::new(
-                "Resource name not provided".to_string(),
+                "Resource name not provided".to_owned(),
                 ErrorStatus::BadRequest,
             ));
         }

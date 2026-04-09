@@ -56,23 +56,23 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_display() {
+    fn it_displays() {
         let task = Task {
-            title: "Test".to_string(),
+            title: "Test".to_owned(),
             status: TaskStatus::PENDING,
         };
         assert_eq!(format!("{task}"), "Pending: Test");
     }
 
     #[test]
-    fn test_from_hashmap() {
-        let mut tasks = HashMap::new();
-        tasks.insert("1".to_string(), Task {
-            title: "Test".to_string(),
+    fn it_converts_from_hashmap() {
+        let mut tasks = HashMap::with_capacity(2);
+        tasks.insert("1".to_owned(), Task {
+            title: "Test".to_owned(),
             status: TaskStatus::PENDING,
         });
-        tasks.insert("2".to_string(), Task {
-            title: "Test".to_string(),
+        tasks.insert("2".to_owned(), Task {
+            title: "Test".to_owned(),
             status: TaskStatus::DONE,
         });
 

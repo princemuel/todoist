@@ -3,7 +3,7 @@ use hyper::body::Bytes;
 use hyper::{Response, header};
 use shared::errors::{Error, ErrorStatus};
 use shared::safe_eject;
-use shared::token::HeaderToken;
+use shared::token::AuthToken;
 use task_core::actions::delete::delete as delete_core;
 use task_core::actions::get::get_all as get_all_core;
 use task_dal::tasks::transactions::delete::DeleteOne;
@@ -18,7 +18,7 @@ use task_dal::tasks::transactions::get::GetAll;
 /// List of task items
 pub async fn delete<T: DeleteOne + GetAll>(
     name: &str,
-    token: HeaderToken,
+    _token: AuthToken,
 ) -> Result<Response<Full<Bytes>>, Error> {
     delete_core::<T>(name).await?;
 

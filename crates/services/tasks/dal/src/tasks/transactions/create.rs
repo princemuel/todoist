@@ -1,6 +1,5 @@
 #[cfg(feature = "json")]
 use std::collections::HashMap;
-use std::future::Future;
 
 use shared::errors::Error;
 #[cfg(feature = "sqlx-postgres")]
@@ -44,7 +43,7 @@ async fn sqlx_postgres_save_one(item: CreateTask) -> Result<Task, Error> {
 }
 
 #[cfg(feature = "json")]
-#[allow(clippy::unused_async)]
+#[expect(clippy::unused_async)]
 async fn json_save_one(item: CreateTask) -> Result<Task, Error> {
     use uuid::Uuid;
     let mut items = find_many().unwrap_or_else(|_| HashMap::with_capacity(1));

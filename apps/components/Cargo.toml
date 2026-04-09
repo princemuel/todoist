@@ -1,0 +1,19 @@
+[package]
+name                 = "components"
+version              = "0.1.0"
+edition.workspace    = true
+repository.workspace = true
+license.workspace    = true
+publish.workspace    = true
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz", "--enable-bulk-memory"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+
+[lints]
+workspace = true

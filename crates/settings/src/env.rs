@@ -27,13 +27,12 @@ use crate::error::SettingsError;
 /// # Testing
 /// export APP_ENVIRONMENT=test
 /// ```
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug)]
 pub(crate) enum Env {
     /// Local/development environment: relaxed constraints, localhost bindings,
     /// longer timeouts for debugging. Uses `config/local.toml` and
     /// `.env.local`. Set via: `APP_ENVIRONMENT=local` (or `dev`,
     /// `development`)
-    #[default]
     Development,
     /// Production environment: strict security, SSL required, optimized for
     /// performance. Uses `config/prod.toml` and requires all secrets in process
@@ -110,9 +109,7 @@ impl fmt::Display for Env {
 /// an error is returned. If the env var is not set, no error is returned and
 /// the environment defaults to [`Env::Development`].
 pub(crate) fn get_env() -> Result<Env, SettingsError> {
-    if let Ok(env) = env::var("APP_ENVIRONMENT") {
-        env.parse()
-    } else {
-        Ok(Env::default())
-    }
+    env::var("APP_ENVIRONMENT")
+        .map_err(SettingsError::VarError)?
+        .parse()
 }

@@ -8,14 +8,14 @@ build() {
 }
 
 optimise() {
-  wasm-opt -Oz --enable-bulk-memory pkg/interface_bg.wasm -o pkg/interface_bg.wasm
+  wasm-opt -Oz --enable-bulk-memory pkg/components_bg.wasm -o pkg/components_bg.wasm
 }
 
 copy_artifacts() {
-  cp pkg/interface_bg.wasm ../dist/interface_bg.wasm
+  cp pkg/components_bg.wasm ../ingress/site/dist/components_bg.wasm
 }
 
-cd interface
+cd ../../../components
 build
 optimise
 copy_artifacts

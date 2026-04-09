@@ -3,6 +3,7 @@ use core::net::{Ipv4Addr, SocketAddr};
 
 use axum::Router;
 use task_dal::migrations::run_migrations;
+use tokio::net::TcpListener;
 
 mod actions;
 
@@ -17,6 +18,6 @@ async fn main() {
     let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, 8080));
     println!("Listening on {}", addr);
 
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    let listener = TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }

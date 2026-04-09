@@ -4,7 +4,7 @@ use hyper::{Request, Response, header};
 use shared::errors::{Error, ErrorStatus};
 use shared::hyper_utils::extract_body::extract_body;
 use shared::safe_eject;
-use shared::token::HeaderToken;
+use shared::token::AuthToken;
 use task_core::actions::get::get_all as get_all_core;
 use task_core::actions::update::update as update_core;
 use task_dal::tasks::transactions::get::GetAll;
@@ -19,7 +19,7 @@ use task_dal::tasks::transactions::update::UpdateOne;
 /// All the items in the task list
 pub async fn update<T: UpdateOne + GetAll>(
     req: Request<Incoming>,
-    token: HeaderToken,
+    _token: AuthToken,
 ) -> Result<Response<Full<Bytes>>, Error> {
     let payload = extract_body(req).await?;
     update_core::<T>(payload).await?;

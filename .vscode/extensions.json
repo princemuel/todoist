@@ -6,7 +6,6 @@
     "dbaeumer.vscode-eslint",
     "rust-lang.rust-analyzer",
     "dotenv.dotenv-vscode",
-    "EditorConfig.EditorConfig",
-    "TypeScriptTeam.native-preview"
+    "EditorConfig.EditorConfig"
   ]
 }

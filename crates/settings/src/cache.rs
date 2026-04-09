@@ -1,10 +1,12 @@
+use core::net::Ipv4Addr;
+
 use serde::Deserialize;
 
 /// The cache (Redis) configuration.
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Copy, Debug, Deserialize)]
 pub struct CacheSettings {
     /// The Redis host, e.g. "localhost" or "redis.example.com"
-    pub host: String,
+    pub host: Ipv4Addr,
     /// The Redis port, e.g. 6379
     pub port: u16,
 }
@@ -16,7 +18,7 @@ impl CacheSettings {
     ///
     /// ```rust
     /// let cache = CacheSettings {
-    ///     host: "127.0.0.1".to_string(),
+    ///     host: "127.0.0.1".into(),
     ///     port: 6379,
     /// };
     /// assert_eq!(cache.uri(), "redis://127.0.0.1:6379");

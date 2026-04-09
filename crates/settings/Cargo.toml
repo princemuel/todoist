@@ -10,9 +10,12 @@ publish.workspace    = true
 dotenvy   = { workspace = true }
 figment   = { version = "0.10", features = ["env", "toml"] }
 secrecy   = { workspace = true, features = ["serde"] }
-serde     = { workspace = true }
-sqlx      = { workspace = true, features = ["postgres"] }
+serde     = { workspace = true, features = ["derive"] }
+sqlx      = { workspace = true, features = ["postgres"], optional = true }
 thiserror = { workspace = true }
+
+[features]
+sqlx-postgres = ["dep:sqlx"]
 
 [lints]
 workspace = true

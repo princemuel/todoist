@@ -1,7 +1,8 @@
-use chrono::{DateTime, NaiveDateTime, Utc};
-use redis_module::{Context, RedisError, RedisResult, RedisString, RedisValue};
+use chrono::{DateTime, Utc};
+use redis_module::{Context, RedisResult, RedisString};
 use uuid::Uuid;
 
+#[derive(Clone, Debug)]
 pub struct UserSession {
     pub key: String,
     pub user_id: Uuid,
@@ -15,9 +16,9 @@ impl UserSession {
         unimplemented!()
     }
 
-    pub fn get_counter(&mut self, ctx: &Context) -> RedisResult { unimplemented!() }
+    pub fn get_counter(&mut self, _ctx: &Context) -> RedisResult { unimplemented!() }
 
-    pub fn update_last_interated(&mut self, ctx: &Context) -> RedisResult { unimplemented!() }
+    pub fn update_last_interated(&mut self, _ctx: &Context) -> RedisResult { unimplemented!() }
 }
 
 impl From<Uuid> for UserSession {

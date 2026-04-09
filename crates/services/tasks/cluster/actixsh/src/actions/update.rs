@@ -1,7 +1,7 @@
 use actix_web::HttpResponse;
 use actix_web::web::Json;
 use shared::errors::Error;
-use shared::token::HeaderToken;
+use shared::token::AuthToken;
 use task_core::actions::get::get_all as get_all_core;
 use task_core::actions::update::update as update_core;
 use task_dal::tasks::schema::Task;
@@ -16,7 +16,7 @@ use task_dal::tasks::transactions::update::UpdateOne;
 /// # Returns
 /// All the items in the task list
 pub async fn update<T: UpdateOne + GetAll>(
-    token: HeaderToken,
+    _token: AuthToken,
     payload: Json<Task>,
 ) -> Result<HttpResponse, Error> {
     update_core::<T>(payload.into_inner()).await?;

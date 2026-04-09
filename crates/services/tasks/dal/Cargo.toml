@@ -12,7 +12,7 @@ cfg-if     = { workspace = true }
 dotenvy    = { workspace = true }
 serde      = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
-sqlx       = { version = "0.8", features = [
+sqlx       = { workspace = true, features = [
   "macros",
   "migrate",
   "postgres",
@@ -22,11 +22,14 @@ sqlx       = { version = "0.8", features = [
 ], optional = true }
 uuid       = { workspace = true, features = ["serde", "v7"] }
 
-shared = { workspace = true }
+settings = { workspace = true, features = ["sqlx-postgres"] }
+shared   = { workspace = true }
 
 [features]
-default       = ["sqlx-postgres"]
 json          = ["serde", "serde_json"]
+serde         = ["dep:serde"]
+serde_json    = ["dep:serde_json"]
+sqlx          = ["dep:sqlx"]
 sqlx-postgres = ["sqlx"]
 
 [lints]

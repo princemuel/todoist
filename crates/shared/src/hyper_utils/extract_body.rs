@@ -1,6 +1,6 @@
-use http_body_util::BodyExt;
+use http_body_util::BodyExt as _;
 use hyper::Request;
-use hyper::body::{Buf, Incoming};
+use hyper::body::{Buf as _, Incoming};
 use serde::de::DeserializeOwned;
 
 use crate::errors::{Error, ErrorStatus};

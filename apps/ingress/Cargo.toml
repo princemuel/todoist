@@ -13,8 +13,8 @@ mime_guess = "2"
 rust-embed = "8"
 tokio      = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
-server   = { package = "tactix", path = "../../crates/services/tasks/cluster/actixsh" }
-task_dal = { workspace = true, features = ["sqlx-postgres"] }
+task_dal    = { workspace = true, features = ["sqlx-postgres"] }
+task_server = { package = "tactix", path = "../../crates/services/tasks/cluster/actixsh" }
 
 [lints]
 workspace = true

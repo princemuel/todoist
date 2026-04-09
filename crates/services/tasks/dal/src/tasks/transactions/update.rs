@@ -1,6 +1,5 @@
 #[cfg(feature = "json")]
 use std::collections::HashMap;
-use std::future::Future;
 
 use shared::errors::Error;
 #[cfg(any(feature = "json", feature = "sqlx-postgres"))]
@@ -46,7 +45,7 @@ async fn sqlx_postgres_update_one(item: Task) -> Result<Task, Error> {
 }
 
 #[cfg(feature = "json")]
-#[allow(clippy::unused_async)]
+#[expect(clippy::unused_async)]
 async fn json_update_one(item: Task) -> Result<Task, Error> {
     let mut items = find_many().unwrap_or_else(|_| HashMap::new());
 

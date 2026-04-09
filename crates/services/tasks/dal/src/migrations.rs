@@ -1,6 +1,6 @@
 use crate::connections::sqlx_postgres::POSTGRES_POOL;
 
-#[allow(clippy::expect_used, clippy::missing_panics_doc)]
+#[expect(clippy::expect_used, clippy::missing_panics_doc)]
 pub async fn run_migrations() {
     eprintln!("Migrating database...");
 

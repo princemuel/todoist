@@ -1,8 +1,7 @@
 use core::hash::BuildHasher;
 use std::collections::HashMap;
-use std::env;
-use std::fs::{File, OpenOptions};
-use std::io::{Read, Write};
+use std::fs::File;
+use std::io::{Read as _, Write as _};
 
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -22,18 +21,12 @@ use shared::safe_eject;
 /// Returns a [`Error`] if the file cannot be
 /// opened or created.
 fn read_handle(path: Option<&str>) -> Result<File, Error> {
-    let path = match path {
-        Some(path) => path,
-        None => &env::var("DATABASE_URL").unwrap_or_else(|_| "db.local.json".to_string()),
-    };
-
     safe_eject!(
-        OpenOptions::new()
-            .read(true)
+        File::options()
             .write(true)
             .create(true)
             .truncate(false)
-            .open(path),
+            .open(path.unwrap_or("db.local.json")),
         ErrorStatus::Unknown,
         "Error writing resource to database"
     )
@@ -52,17 +45,8 @@ fn read_handle(path: Option<&str>) -> Result<File, Error> {
 /// Returns a [`Error`] if the file cannot be
 /// opened or created.
 fn write_handle(path: Option<&str>) -> Result<File, Error> {
-    let path = match path {
-        Some(path) => path,
-        None => &env::var("DATABASE_URL").unwrap_or_else(|_| "db.local.json".to_string()),
-    };
-
     safe_eject!(
-        OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(path),
+        File::create(path.unwrap_or("db.local.json")),
         ErrorStatus::Unknown,
         "Error writing resource to database"
     )
@@ -161,7 +145,7 @@ where
     T: Serialize + DeserializeOwned + Clone,
 {
     let mut items = find_many::<T>().unwrap_or_else(|_| HashMap::with_capacity(1));
-    items.insert(name.to_string(), item.clone());
+    items.insert(name.to_owned(), item.clone());
     create_many(&items)
 }
 
@@ -191,14 +175,14 @@ where
 }
 
 #[cfg(test)]
-#[allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+#[expect(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 mod tests {
 
     use super::*;
 
     #[test]
     #[cfg(feature = "json")]
-    fn test_file_handle() {
+    fn it_gets_the_file_handle() {
         let file = read_handle(None);
         assert!(file.is_ok());
 
@@ -208,8 +192,8 @@ mod tests {
 
     #[test]
     #[cfg(feature = "json")]
-    fn test_find_many() {
-        create_one("1", &"Task 1".to_string()).unwrap();
+    fn it_gets_the_items() {
+        create_one("1", &"Task 1".to_owned()).unwrap();
 
         let tasks = find_many::<String>().unwrap();
         println!("{tasks:?}");

@@ -1,11 +1,12 @@
 /// The houses data from the token in the
 /// header.
-pub struct HeaderToken {
+#[derive(Clone, Debug)]
+pub struct AuthToken {
     /// The token from the header
     pub message: String,
 }
 
-impl HeaderToken {
+impl AuthToken {
     #[must_use]
     pub fn new(message: String) -> Self { Self { message } }
 }
@@ -17,10 +18,10 @@ mod actix_impl {
     use actix_web::dev::Payload;
     use futures::future::{Ready, err, ok};
 
-    use super::HeaderToken;
+    use super::AuthToken;
     use crate::errors::{Error, ErrorStatus};
 
-    impl ActixFromRequest for HeaderToken {
+    impl ActixFromRequest for AuthToken {
         type Error = Error;
         type Future = Ready<Result<Self, Error>>;
 
@@ -28,16 +29,16 @@ mod actix_impl {
             let Some(raw_data) = req.headers().get("token") else {
                 return err(Error {
                     status: ErrorStatus::Unauthorized,
-                    message: "Token not found in header under key 'token'".to_string(),
+                    message: "Token not found in header under key 'token'".to_owned(),
                 });
             };
 
             let message = match raw_data.to_str() {
-                Ok(token) => token.to_string(),
+                Ok(token) => token.to_owned(),
                 Err(_) => {
                     return err(Error {
                         status: ErrorStatus::Unauthorized,
-                        message: "token not a valid string".to_string(),
+                        message: "token not a valid string".to_owned(),
                     });
                 }
             };
@@ -52,10 +53,10 @@ mod axum_impl {
     pub use axum::extract::FromRequestParts as AxumFromRequestParts;
     use axum::http::request::Parts;
 
-    use super::HeaderToken;
+    use super::AuthToken;
     use crate::errors::{Error, ErrorStatus};
 
-    impl<S> AxumFromRequestParts<S> for HeaderToken
+    impl<S> AxumFromRequestParts<S> for AuthToken
     where
         S: Send + Sync,
     {
@@ -67,18 +68,13 @@ mod axum_impl {
         ) -> Result<Self, Self::Rejection> {
             let raw_data = parts.headers.get("token").ok_or_else(|| Error {
                 status: ErrorStatus::Unauthorized,
-                message: "Token not found in header under key 'token'".to_string(),
+                message: "Token not found in header under key 'token'".to_owned(),
             })?;
 
             let message = raw_data
                 .to_str()
-                .map_err(|_| {
-                    Error::new(
-                        "Token is not a valid string".to_string(),
-                        ErrorStatus::Unauthorized,
-                    )
-                })?
-                .to_string();
+                .map_err(|e| Error::new(e.to_string(), ErrorStatus::Unauthorized))?
+                .to_owned();
 
             Ok(Self::new(message))
         }
@@ -93,19 +89,19 @@ mod rocket_impl {
     pub use rocket::request::FromRequest as RocketFromRequest;
     use rocket::request::Request;
 
-    use super::HeaderToken;
+    use super::AuthToken;
     use crate::errors::{Error, ErrorStatus};
 
     #[rocket::async_trait]
-    impl<'r> RocketFromRequest<'r> for HeaderToken {
+    impl<'r> RocketFromRequest<'r> for AuthToken {
         type Error = Error;
 
-        async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
-            match req.headers().get_one("token") {
-                Some(token) => Outcome::Success(Self::new(token.to_string())),
+        async fn from_request(request: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
+            match request.headers().get_one("token") {
+                Some(token) => Outcome::Success(Self::new(token.to_owned())),
                 None => Outcome::Error((Status::Unauthorized, Error {
                     status: ErrorStatus::Unauthorized,
-                    message: "token not in header under key 'token'".to_string(),
+                    message: "token not in header under key 'token'".to_owned(),
                 })),
             }
         }

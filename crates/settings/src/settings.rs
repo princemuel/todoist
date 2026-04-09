@@ -2,6 +2,7 @@ use serde::Deserialize;
 
 use crate::auth::AuthSettings;
 use crate::cache::CacheSettings;
+#[cfg(feature = "sqlx-postgres")]
 use crate::database::DatabaseSettings;
 use crate::elasticsearch::ElasticSearchSettings;
 use crate::server::ServerSettings;
@@ -37,6 +38,7 @@ pub struct Settings {
     /// The server configuration
     pub server: ServerSettings,
     /// The database configuration
+    #[cfg(feature = "sqlx-postgres")]
     pub database: DatabaseSettings,
     /// The cache (Redis) configuration
     pub cache: CacheSettings,

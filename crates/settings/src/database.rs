@@ -1,7 +1,10 @@
+#![cfg(feature = "sqlx-postgres")]
+
 use core::time::Duration;
+
+use secrecy::{ExposeSecret as _, SecretString};
 use serde::Deserialize;
-use secrecy::{ExposeSecret, SecretString};
-use sqlx::ConnectOptions;
+use sqlx::ConnectOptions as _;
 use sqlx::postgres::{PgConnectOptions, PgPoolOptions, PgSslMode};
 
 /// The database configuration.
@@ -41,10 +44,10 @@ pub struct DatabaseSettings {
 impl Default for DatabaseSettings {
     fn default() -> Self {
         Self {
-            host: "localhost".to_string(),
+            host: "localhost".to_owned(),
             port: 5432,
-            name: "pennies".to_string(),
-            username: "kalel".to_string(),
+            name: "pennies".to_owned(),
+            username: "kalel".to_owned(),
             require_ssl: false,
             password: SecretString::from("p£AwJj6)e*]A13j0"),
             pool_min_connections: 1,

@@ -32,20 +32,19 @@ impl FromStr for TaskStatus {
             "DONE" => Ok(TaskStatus::DONE),
             "PENDING" => Ok(TaskStatus::PENDING),
             _ => Err(Error::new(
-                "invalid status".to_string(),
+                "invalid status".to_owned(),
                 ErrorStatus::BadRequest,
             )),
         }
     }
 }
 
-#[allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_task_status() {
+    fn task_status() {
         assert_eq!(TaskStatus::DONE.to_string(), "done");
         assert_eq!(TaskStatus::PENDING.to_string(), "pending");
 
@@ -63,10 +62,10 @@ mod tests {
     }
 
     #[test]
-    fn test_task_status_from_string() {
-        let done = "Done".to_string();
-        let pending = "Pending".to_string();
-        let invalid = "INVALID".to_string();
+    fn task_status_from_string() {
+        let done = "Done".to_owned();
+        let pending = "Pending".to_owned();
+        let invalid = "INVALID".to_owned();
 
         assert_eq!(pending.parse::<TaskStatus>().unwrap(), TaskStatus::PENDING);
         assert_eq!(done.parse::<TaskStatus>().unwrap(), TaskStatus::DONE);

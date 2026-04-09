@@ -1,14 +1,14 @@
 /// Settings-related errors.
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum SettingsError {
-    #[error("Invalid environment: {0}")]
+    #[error("Invalid Environment: {0}")]
     InvalidEnvironment(String),
 
-    #[error("Configuration error: {0}")]
+    #[error("Configuration Error: {0}")]
     ConfigError(String),
 
-    #[error("IO error: {0}")]
-    IoError(#[from] std::io::Error),
+    #[error("EnvVar Error: {0}")]
+    VarError(#[from] ::std::env::VarError),
 }
 
 pub(crate) type SettingsResult<T> = Result<T, SettingsError>;

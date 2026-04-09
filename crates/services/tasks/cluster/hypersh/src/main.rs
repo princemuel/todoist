@@ -76,7 +76,7 @@ async fn handle(req: Request<body::Incoming>) -> Result<Response<Full<Bytes>>, I
 
     match response {
         Ok(value) => Ok(value),
-        Err(err) => Ok(err.into_hyper_response()),
+        Err(err) => Ok(err.into_response()),
     }
 }
 

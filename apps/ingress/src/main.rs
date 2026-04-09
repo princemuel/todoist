@@ -5,18 +5,19 @@ use std::path::Path;
 use actix_cors::Cors;
 use actix_web::{App, HttpRequest, HttpResponse, HttpServer, Responder, web};
 use rust_embed::RustEmbed;
-use task_dal::migrations::run_migrations;
+use task_dal::migrations::run_migrations as run_task_migrations;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
-    run_migrations().await;
+    run_task_migrations().await;
+
     HttpServer::new(|| {
         let cors = Cors::default()
             .allow_any_origin()
             .allow_any_method()
             .allow_any_header();
         App::new()
-            .configure(server::actions::views)
+            .configure(task_server::actions::views)
             .wrap(cors)
             .default_service(web::route().to(catch_all))
     })
